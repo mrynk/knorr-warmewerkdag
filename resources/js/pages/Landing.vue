@@ -46,8 +46,9 @@ const handleComplete = (e: string[]) => alert(e.join(''))
             </div>
         </div>
         <div class="w-full bg-[#4E8B45]">
-            <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-xl mx-auto">
-                <img src="/static/soup-title.png" alt="Soep op? Tijd voor je prijs@" class="w-3/4 h-auto my-8" />
+            <div class="flex flex-col gap-8 items-center px-6 py-10">
+                <img src="/static/soup-title.png" alt="Soep op? Tijd voor je prijs@"
+                    class="w-3/4 h-auto my-8 max-w-xl" />
                 <video src="/static/video.mp4" paused controls class="aspect-1/1 object-cover w-full xl:aspect-16/9" />
             </div>
         </div>

@@ -1,3 +1,5 @@
+@import url('https://fonts.bunny.net/css?family=plus-jakarta-sans:400|roboto:100,300,400,500,700,900|source-sans-pro:200,200i,300,300i,400,400i,600,600i,700,700i,900,900i');
+
 @import 'tailwindcss';
 
 @import 'tw-animate-css';
@@ -8,7 +10,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: Roboto, Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -67,6 +69,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
     *,
     ::after,
     ::before,
@@ -77,10 +80,11 @@
 }
 
 @layer utilities {
+
     body,
     html {
         --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            'Roboto', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     }
 }
 
@@ -161,6 +165,7 @@
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
     }
