@@ -37,7 +37,7 @@ const handleComplete = (e: string[]) => alert(e.join(''))
                         class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
                     <Select>
                         <SelectTrigger
-                            class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80">
+                            class="w-full text-2xl md:text-xl dark:bg-white dark:hover:bg-white/70 dark:text-black dark:placeholder:text-black/80">
                             <SelectValue placeholder="Welke soep heb je gegeten?" />
                         </SelectTrigger>
                         <SelectContent>
