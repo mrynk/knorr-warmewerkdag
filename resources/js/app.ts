@@ -5,14 +5,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
-import { initializeTheme } from './composables/useAppearance';
-import { useColorMode } from '@vueuse/core';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
-const colorMode = useColorMode();
-
-colorMode.value = 'dark';
 
 
 
@@ -31,4 +25,4 @@ createInertiaApp({
 });
 
 // This will set light / dark mode on page load...
-initializeTheme();
+// initializeTheme();
