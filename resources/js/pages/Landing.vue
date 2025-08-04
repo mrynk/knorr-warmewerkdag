@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, onMounted, onUpdated, ref, Transition } from 'vue';
 import CampaignLayout from '@/layouts/CampaignLayout.vue';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,61 +8,185 @@ import {
     PinInputGroup,
     PinInputSlot,
 } from '@/components/ui/pin-input'
-import { ChevronRight } from 'lucide-vue-next';
-import { Separator } from '@/components/ui/separator';
+import { ChevronRight, Loader2 } from 'lucide-vue-next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useForm } from '@inertiajs/vue3';
+import { useWindowScroll } from '@vueuse/core';
+import type Entry from '@/types/Entry';
+import { gsap } from 'gsap';
 
-const value = ref<string[]>([''])
-const handleComplete = (e: string[]) => alert(e.join(''))
+const props = defineProps<{
+    entry?: Entry;
+}>();
+
+const form = useForm({
+    code: '',
+    name: '',
+    email: '',
+    soup: '',
+}).transform(data => {
+    return {
+        ...data,
+        code: data.code.join('').toUpperCase(),
+    };
+});
+
+const { y } = useWindowScroll();
+
+onMounted(() => {
+    gsap.from('[data-reveal-me]', {
+        translateY: -50,
+        autoAlpha: 0,
+        duration: 0.5,
+        ease: 'sine.out',
+        stagger: 0.15
+    });
+    console.log('mounted');
+});
+
+const revealDelay = ref(false);
+onUpdated(() => {
+    console.log('updated');
+    if (!props.entry) return;
+    revealDelay.value = true;
+    setTimeout(() => {
+        revealDelay.value = false;
+    }, 4000);
+});
+
+const dots = ref('');
+setInterval(() => {
+    dots.value = dots.value + '.';
+    if (dots.value.length > 3) dots.value = '';
+}, 333);
+
 </script>
 
 <template>
     <CampaignLayout>
         <div class="bg-gradient-to-b from-black/0 via-black/0 to-[#4E8B45]">
-            <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-xl mx-auto">
-                <img src="/static/title.png" alt="Soep op? Tijd voor je prijs@" class="w-full h-auto" />
-                <p class="text-center text-white text-2xl font-bold p-2">Vul je code in en ontdek direct of je prijs
-                    hebt!
-                </p>
-                <form action="" class="flex flex-col gap-4 w-full items-center">
-                    <PinInput id="pin-input" v-model="value" placeholder="-" class="h-16">
-                        <PinInputGroup class="w-full h-16">
-                            <PinInputSlot v-for="(id, index) in 8" :key="id" :index="index"
-                                class="w-full h-16 dark:bg-white dark:text-black dark:placeholder:text-black/80 text-2xl m-1" />
-                        </PinInputGroup>
-                    </PinInput>
-                    <Input type="text" placeholder="Naam"
-                        class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
-                    <Input type="text" placeholder="E-mail"
-                        class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
-                    <Select>
-                        <SelectTrigger
-                            class="w-full text-2xl md:text-xl dark:bg-white dark:hover:bg-white/70 dark:text-black dark:placeholder:text-black/80">
-                            <SelectValue placeholder="Welke soep heb je gegeten?" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="tomatensoep">Tomatensoep</SelectItem>
-                            <SelectItem value="erwtensoep">Erwtensoep</SelectItem>
-                            <SelectItem value="kippensoep">Kippensoep</SelectItem>
-                            <SelectItem value="groentesoep">Groentesoep</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <p class="text-sm text-white p-2 text-center">
-                        Door deel te nemen met deze actie ga je akkoord met onze <a href="#"
-                            class="text-white underline">actievoorwaarden</a>.
-                    </p>
-                    <Button type="submit" class="w-2/3 bg-[#F8BA00] text-white">Check mijn code
-                        <ChevronRight class="w-4 h-4" />
-                    </Button>
-                </form>
+            <div class="relative flex flex-col gap-8 items-center px-6 py-10 max-w-xl mx-auto">
+                <Transition name="fade">
+                    <span
+                        class="inline-block text-white text-2xl animate-bounce absolute z-20 -top-10 left-1/2 -translate-x-1/2"
+                        v-show="y === 0">
+                        &#x1F80B;
+                    </span>
+                </Transition>
+                <img src="/static/title.png" alt="Soep op? Tijd voor je prijs@" class="w-full h-auto" data-reveal-me />
+
+                <div class="relative flex flex-col gap-4 w-full items-center" data-reveal-me>
+                    <div class="w-full bg-white rounded-xl text-black text-center py-16" v-if="revealDelay">
+                        <span class="text-2xl font-bold p-16">
+                            We controleren je code<span class="w-10 inline-block text-left">{{ dots }}</span>
+                        </span>
+                    </div>
+                    <Transition name="fade">
+                        <template v-if="!revealDelay">
+                            <div :class="(entry.reward ? 'bg-[#4E8B45]' : 'bg-white') + ' w-full rounded-xl'"
+                                v-if="entry">
+                                <div class="flex flex-col gap-4 w-full items-center" v-if="entry.reward">
+                                    <div class="p-8 flex flex-col gap-4 items-center">
+                                        <img src="/static/reward-title.png" alt="No reward" class="w-full h-auto" />
+                                        <p>Geniet van je soep, je prijs komt eraan.</p>
+                                        <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
+                                            class="w-1/2 h-auto" />
+                                    </div>
+                                    <div class="bg-white text-black w-full rounded-b-xl p-8 text-center">
+                                        {{ entry.reward.description }}
+                                    </div>
+
+                                </div>
+                                <div class="flex flex-col gap-4 w-full items-center p-8" v-else>
+                                    <img src="/static/no-reward-title.png" alt="No reward" class="w-full h-auto" />
+                                    <img src="/static/giphy1.gif" alt="No reward" class="w-full h-auto" />
+                                    <Button as="a" type="button"
+                                        class="w-full uppercase bg-[#4E8B45] hover:bg-[#4E8B45]/80 h-auto"
+                                        :href="route('landing')">
+                                        <img src="/static/cta.png" alt="Opnieuw" class="w-1/2 h-auto" />
+                                    </Button>
+                                    <p class="text-center text-black font-bold text-md">Doe zo vaak mee als je wilt</p>
+                                </div>
+                            </div>
+                        </template>
+                    </Transition>
+                    <form @submit.prevent="form.post('/redeem', { preserveScroll: true })" data-reveal-me v-if="!entry"
+                        class="flex flex-col gap-4 w-full items-center">
+                        <p class="text-center text-white text-2xl font-bold p-2" data-reveal-me>Vul je code in en ontdek
+                            direct of je prijs hebt!
+                        </p>
+                        <div v-if="form.errors.message" class="text-red-300 text-sm text-left w-full">&#x2757; {{
+                            form.errors.message }}
+                        </div>
+                        <PinInput id="pin-input" v-model="form.code" placeholder="-" class="h-16">
+                            <PinInputGroup class="w-full h-16">
+                                <PinInputSlot v-for="(id, index) in 8" :key="id" :index="index"
+                                    class="w-full h-16 dark:bg-white dark:text-black dark:placeholder:text-black/80 text-2xl m-1 uppercase" />
+                            </PinInputGroup>
+                        </PinInput>
+                        <div v-if="form.errors.code" class="text-red-300 text-sm text-left w-full">&#x2757; {{
+                            form.errors.code }}
+                        </div>
+                        <Input type="text" placeholder="Naam" v-model="form.name" required
+                            class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
+                        <div v-if="form.errors.name" class="text-red-300 text-sm text-left w-full">&#x2757; {{
+                            form.errors.name }}
+                        </div>
+                        <Input type="text" placeholder="E-mail" v-model="form.email" required
+                            class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
+                        <div v-if="form.errors.email" class="text-red-300 text-sm text-left w-full">&#x2757; {{
+                            form.errors.email }}
+                        </div>
+                        <Select v-model="form.soup" name="soup" class="w-full" required>
+                            <SelectTrigger
+                                class="w-full text-2xl md:text-xl dark:bg-white dark:hover:bg-white/70 dark:text-black dark:placeholder:text-black/80">
+                                <SelectValue placeholder="Welke soep heb je gegeten?" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="tomatensoep">Tomatensoep</SelectItem>
+                                <SelectItem value="erwtensoep">Erwtensoep</SelectItem>
+                                <SelectItem value="kippensoep">Kippensoep</SelectItem>
+                                <SelectItem value="groentesoep">Groentesoep</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <div v-if="form.errors.soup" class="text-red-300 text-sm text-left w-full">&#x2757; {{
+                            form.errors.soup }}
+                        </div>
+                        <p class="text-sm text-white p-2 text-center">
+                            Door deel te nemen met deze actie ga je akkoord met onze <a href="#"
+                                class="text-white underline">actievoorwaarden</a>.
+                        </p>
+                        <Button type="submit" class="w-2/3 bg-[#F8BA00] text-white hover:bg-[#F8BA00]/80"
+                            :disabled="form.processing">Check
+                            mijn
+                            code
+                            <ChevronRight class="w-4 h-4" v-if="!form.processing" />
+                            <Loader2 class="w-4 h-4 animate-spin" v-if="form.processing" />
+                        </Button>
+                    </form>
+                </div>
+
             </div>
         </div>
         <div class="w-full bg-[#4E8B45]">
             <div class="flex flex-col gap-8 items-center px-6 py-10">
                 <img src="/static/soup-title.png" alt="Soep op? Tijd voor je prijs@"
                     class="w-3/4 h-auto my-8 max-w-xl" />
-                <video src="/static/video.mp4" paused controls class="aspect-1/1 object-cover w-full xl:aspect-16/9" />
+                <video src="/static/video.mp4" controls class="aspect-1/1 object-cover w-full xl:aspect-16/9" />
             </div>
         </div>
     </CampaignLayout>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

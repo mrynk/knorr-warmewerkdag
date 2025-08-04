@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { cn } from '@/lib/utils';
 
+const props = defineProps<{
+    class?: string;
+}>();
 </script>
 
 <template>
-    <div class="relative flex w-full h-[50lvh] overflow-hidden flex-col gap-6 md:h-[60lvh] xl:h-[75lvh]">
+    <div
+        :class="cn('relative flex w-full h-[50lvh] overflow-hidden flex-col gap-6 md:h-[60lvh] xl:h-[75lvh]', props.class)">
         <div class="fixed z-0 w-full  h-[50lvh] md:h-[60lvh] xl:h-[75lvh]">
             <img src="/static/wood.jpg" alt="Rewards Header"
                 class="w-[200%] max-w-none h-1/2 object-fill absolute bottom-0 -left-1/2 xl:w-full xl:-left-0" />
