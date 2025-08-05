@@ -24,13 +24,13 @@ class LandingController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->errorInfo[1] == 1062) { // MySQL duplicate entry error code
                 \Log::error('Duplicate entry attempt', ['error' => $e->getMessage()]);
-                return redirect()->route('home')->withErrors(['code' => 'Ongeldige actiecode (011)']);
+                return redirect()->route('landing')->withErrors(['code' => 'Ongeldige actiecode (011)']);
             }
             \Log::error('Database error creating entry', ['error' => $e->getMessage()]);
-            return redirect()->route('home')->withErrors(['code' => 'Ongeldige actiecode (012)']);
+            return redirect()->route('landing')->withErrors(['code' => 'Ongeldige actiecode (012)']);
         } catch (\Exception $e) {
             \Log::error('Error creating entry', ['error' => $e->getMessage()]);
-            return redirect()->route('home')->withErrors(['code' =>  'Ongeldige actiecode (010)']);
+            return redirect()->route('landing')->withErrors(['code' =>  'Ongeldige actiecode (010)']);
         }
 
         return redirect()->route('result', $entry->code);

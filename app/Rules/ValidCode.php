@@ -21,7 +21,7 @@ class ValidCode implements ValidationRule
             $fail('Ongeldige actiecode (001)');
         }
 
-        list($batchNumber, $serialNumber) = $decoded;
+        [$batchNumber, $serialNumber] = $decoded;
 
         if( $sqids->encode([ $batchNumber, $serialNumber ] ) !== $value ) {
             $fail('Ongeldige actiecode (002)');
