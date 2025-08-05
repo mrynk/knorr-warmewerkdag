@@ -126,12 +126,12 @@ setInterval(() => {
                             form.errors.code }}
                         </div>
                         <Input type="text" placeholder="Naam" v-model="form.name" required
-                            class="w-full text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
+                            class="w-full text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80 placeholder:text-xl md:text-xl" />
                         <div v-if="form.errors.name" class="text-red-300 text-sm text-left w-full">&#x2757; {{
                             form.errors.name }}
                         </div>
-                        <Input type="text" placeholder="E-mail" v-model="form.email" required
-                            class="w-full text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
+                        <Input type="email" placeholder="E-mail" v-model="form.email" required
+                            class="w-full text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80 placeholder:text-xl md:text-xl" />
                         <div v-if="form.errors.email" class="text-red-300 text-sm text-left w-full">&#x2757; {{
                             form.errors.email }}
                         </div>
