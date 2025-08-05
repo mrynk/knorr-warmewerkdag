@@ -8,7 +8,7 @@ import {
     PinInputGroup,
     PinInputSlot,
 } from '@/components/ui/pin-input'
-import { ChevronRight, Loader2 } from 'lucide-vue-next';
+import { ArrowBigDown, ChevronRight, Loader2 } from 'lucide-vue-next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from '@inertiajs/vue3';
 import { useWindowScroll } from '@vueuse/core';
@@ -67,11 +67,9 @@ setInterval(() => {
         <div class="bg-gradient-to-b from-black/0 via-black/0 to-[#4E8B45]">
             <div class="relative flex flex-col gap-8 items-center px-6 py-10 max-w-xl mx-auto">
                 <Transition name="fade">
-                    <span
-                        class="inline-block text-white text-2xl animate-bounce absolute z-20 -top-10 left-1/2 -translate-x-1/2"
-                        v-show="y === 0">
-                        &#x1F80B;
-                    </span>
+                    <ArrowBigDown
+                        class="absolute z-20 -top-10 left-1/2 -translate-x-1/2 w-6 h-6 xl:h-10 xl:w-10 animate-bounce"
+                        v-show="y === 0" />
                 </Transition>
                 <img src="/static/title.png" alt="Soep op? Tijd voor je prijs@" class="w-full h-auto" data-reveal-me />
 
@@ -128,18 +126,18 @@ setInterval(() => {
                             form.errors.code }}
                         </div>
                         <Input type="text" placeholder="Naam" v-model="form.name" required
-                            class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
+                            class="w-full text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
                         <div v-if="form.errors.name" class="text-red-300 text-sm text-left w-full">&#x2757; {{
                             form.errors.name }}
                         </div>
                         <Input type="text" placeholder="E-mail" v-model="form.email" required
-                            class="w-full text-2xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
+                            class="w-full text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80" />
                         <div v-if="form.errors.email" class="text-red-300 text-sm text-left w-full">&#x2757; {{
                             form.errors.email }}
                         </div>
                         <Select v-model="form.soup" name="soup" class="w-full" required>
                             <SelectTrigger
-                                class="w-full text-2xl md:text-xl dark:bg-white dark:hover:bg-white/70 dark:text-black dark:placeholder:text-black/80">
+                                class="w-full text-xl dark:bg-white dark:hover:bg-white/70 dark:text-black dark:placeholder:text-black/80">
                                 <SelectValue placeholder="Welke soep heb je gegeten?" />
                             </SelectTrigger>
                             <SelectContent>
