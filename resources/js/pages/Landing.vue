@@ -167,7 +167,7 @@ setInterval(() => {
             </div>
         </div>
         <div class="w-full bg-[#4E8B45]">
-            <div class="flex flex-col gap-8 items-center px-6 py-10">
+            <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-4xl mx-auto">
                 <img src="/static/soup-title.png" alt="Soep op? Tijd voor je prijs@"
                     class="w-3/4 h-auto my-8 max-w-xl" />
                 <video src="/static/video.mp4" controls class="aspect-1/1 object-cover w-full xl:aspect-16/9" />

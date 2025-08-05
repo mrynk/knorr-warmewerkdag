@@ -19,7 +19,10 @@ class ValidCode implements ValidationRule
 
         if (empty($decoded) || count($decoded) !== 2) {
             $fail('Ongeldige actiecode (001)');
+            return;
         }
+
+        dd( count($decoded) );
 
         [$batchNumber, $serialNumber] = $decoded;
 
