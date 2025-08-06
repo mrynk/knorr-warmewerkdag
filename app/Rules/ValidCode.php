@@ -22,8 +22,6 @@ class ValidCode implements ValidationRule
             return;
         }
 
-        dd( count($decoded) );
-
         [$batchNumber, $serialNumber] = $decoded;
 
         if( $sqids->encode([ $batchNumber, $serialNumber ] ) !== $value ) {
