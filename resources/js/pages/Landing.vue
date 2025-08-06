@@ -51,7 +51,7 @@ onUpdated(() => {
     revealDelay.value = true;
     setTimeout(() => {
         revealDelay.value = false;
-    }, 4000);
+    }, 20000);
 });
 
 const dots = ref('');
@@ -63,7 +63,7 @@ setInterval(() => {
 </script>
 
 <template>
-    <CampaignLayout>
+    <CampaignLayout :no-spacing="entry">
         <div class="bg-gradient-to-b from-black/0 via-black/0 to-[#4E8B45]">
             <div class="relative flex flex-col gap-8 items-center px-6 py-10 max-w-xl mx-auto">
                 <Transition name="fade">
@@ -75,8 +75,8 @@ setInterval(() => {
 
                 <div class="relative flex flex-col gap-4 w-full items-center" data-reveal-me>
                     <div class="w-full bg-white rounded-xl text-black text-center py-16" v-if="revealDelay">
-                        <span class="text-2xl font-bold p-16">
-                            We controleren je code<span class="w-10 inline-block text-left">{{ dots }}</span>
+                        <span class="text-xl font-bold py-16">
+                            We controleren je code<span class="w-5 inline-block text-left">{{ dots }}</span>
                         </span>
                     </div>
                     <Transition name="fade">
@@ -86,7 +86,7 @@ setInterval(() => {
                                 <div class="flex flex-col gap-4 w-full items-center" v-if="entry.reward">
                                     <div class="p-8 flex flex-col gap-4 items-center">
                                         <img src="/static/reward-title.png" alt="No reward" class="w-full h-auto" />
-                                        <p>Geniet van je soep, je prijs komt eraan.</p>
+                                        <p>Geniet van je soep,<br />je prijs komt eraan!</p>
                                         <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
                                             class="w-1/2 h-auto" />
                                     </div>
@@ -125,8 +125,10 @@ setInterval(() => {
                         <div v-if="form.errors.code" class="text-red-300 text-sm text-left w-full">&#x2757; {{
                             form.errors.code }}
                         </div>
-                        <Input type="text" placeholder="Naam" v-model="form.name" required
-                            class="w-full text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80 placeholder:text-xl md:text-xl" />
+                        <Input type="text" placeholder="Naam" v-model="form.name" required class="w-full text-xl 
+                            dark:bg-white dark:text-black dark:placeholder:text-black/80
+                            placeholder:text-xl
+                            md:text-xl" />
                         <div v-if="form.errors.name" class="text-red-300 text-sm text-left w-full">&#x2757; {{
                             form.errors.name }}
                         </div>
@@ -135,29 +137,29 @@ setInterval(() => {
                         <div v-if="form.errors.email" class="text-red-300 text-sm text-left w-full">&#x2757; {{
                             form.errors.email }}
                         </div>
-                        <Select v-model="form.soup" name="soup" class="w-full" required>
-                            <SelectTrigger
-                                class="w-full text-xl dark:bg-white dark:hover:bg-white/70 dark:text-black dark:placeholder:text-black/80">
-                                <SelectValue placeholder="Welke soep heb je gegeten?" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="tomatensoep">Tomatensoep</SelectItem>
-                                <SelectItem value="erwtensoep">Erwtensoep</SelectItem>
-                                <SelectItem value="kippensoep">Kippensoep</SelectItem>
-                                <SelectItem value="groentesoep">Groentesoep</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <div v-if="form.errors.soup" class="text-red-300 text-sm text-left w-full">&#x2757; {{
-                            form.errors.soup }}
+                        <div class="w-full relative flex flex-col items-center">
+                            <Select v-model="form.soup" name="soup" required>
+                                <SelectTrigger
+                                    class="w-full text-xl dark:bg-white dark:hover:bg-white/70 dark:text-black dark:placeholder:text-black/80">
+                                    <SelectValue placeholder="Welke soep heb je gegeten?" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="tomatensoep">Tomatensoep</SelectItem>
+                                    <SelectItem value="erwtensoep">Erwtensoep</SelectItem>
+                                    <SelectItem value="kippensoep">Kippensoep</SelectItem>
+                                    <SelectItem value="groentesoep">Groentesoep</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <div v-if="form.errors.soup" class="text-red-300 text-sm text-left w-full">&#x2757; {{
+                                form.errors.soup }}
+                            </div>
                         </div>
                         <p class="text-sm text-white p-2 text-center">
                             Door deel te nemen met deze actie ga je akkoord met onze <a href="#"
                                 class="text-white underline">actievoorwaarden</a>.
                         </p>
                         <Button type="submit" class="w-2/3 bg-[#F8BA00] text-white hover:bg-[#F8BA00]/80"
-                            :disabled="form.processing">Check
-                            mijn
-                            code
+                            :disabled="form.processing"><span>Check mijn code</span>
                             <ChevronRight class="w-4 h-4" v-if="!form.processing" />
                             <Loader2 class="w-4 h-4 animate-spin" v-if="form.processing" />
                         </Button>
@@ -169,7 +171,7 @@ setInterval(() => {
         <div class="w-full bg-[#4E8B45]">
             <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-4xl mx-auto">
                 <img src="/static/soup-title.png" alt="Soep op? Tijd voor je prijs@"
-                    class="w-3/4 h-auto my-8 max-w-xl" />
+                    class="w-3/4 h-auto md:my-8 max-w-xl" />
                 <video src="/static/video.mp4" controls class="aspect-1/1 object-cover w-full xl:aspect-16/9" />
             </div>
         </div>
