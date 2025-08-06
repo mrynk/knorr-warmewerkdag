@@ -7,9 +7,8 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div
-        :class="cn('relative flex w-full h-[50lvh] overflow-hidden flex-col gap-6 md:h-[60lvh] xl:h-[75lvh]', props.class)">
-        <div class="fixed z-0 w-full  h-[50lvh] md:h-[60lvh] xl:h-[75lvh]">
+    <div :class="cn('w-full h-[50lvh] overflow-hidden flex-col gap-6 md:h-[60lvh] xl:h-[75lvh]', props.class)">
+        <div class="fixed w-full h-[50lvh] md:h-[60lvh] xl:h-[75lvh]" data-reveal-me>
             <img src="/static/wood.jpg" alt="Rewards Header"
                 class="w-[200%] max-w-none h-1/2 object-fill absolute bottom-0 -left-1/2 xl:w-full xl:-left-0" />
             <div class="flex w-full h-1/2 bg-gradient-to-b from-[#4E8B45] to-black/0 absolute top-0 left-0"></div>

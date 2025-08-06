@@ -51,7 +51,7 @@ onUpdated(() => {
     revealDelay.value = true;
     setTimeout(() => {
         revealDelay.value = false;
-    }, 20000);
+    }, 4000);
 });
 
 const dots = ref('');
