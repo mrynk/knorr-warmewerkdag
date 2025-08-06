@@ -52,6 +52,7 @@ onUpdated(() => {
     setTimeout(() => {
         revealDelay.value = false;
     }, 4000);
+    window.scrollTo(0, 0);
 });
 
 const dots = ref('');
@@ -63,7 +64,7 @@ setInterval(() => {
 </script>
 
 <template>
-    <CampaignLayout :no-spacing="entry">
+    <CampaignLayout :no-spacing="!!entry">
         <div class="bg-gradient-to-b from-black/0 via-black/0 to-[#4E8B45]">
             <div class="relative flex flex-col gap-8 items-center px-6 py-10 max-w-xl mx-auto">
                 <Transition name="fade">
@@ -86,7 +87,8 @@ setInterval(() => {
                                 <div class="flex flex-col gap-4 w-full items-center" v-if="entry.reward">
                                     <div class="p-8 flex flex-col gap-4 items-center">
                                         <img src="/static/reward-title.png" alt="No reward" class="w-full h-auto" />
-                                        <p>Geniet van je soep,<br />je prijs komt eraan!</p>
+                                        <p>Geniet van je {{ entry.soup }},<br />we nemen contact met je op om je prijs
+                                            op te sturen.</p>
                                         <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
                                             class="w-1/2 h-auto" />
                                     </div>
@@ -103,7 +105,7 @@ setInterval(() => {
                                         :href="route('landing')">
                                         <img src="/static/cta.png" alt="Opnieuw" class="w-1/2 h-auto" />
                                     </Button>
-                                    <p class="text-center text-black font-bold text-md">Doe zo vaak mee als je wilt</p>
+                                    <p class="text-center text-black font-bold text-md">Doe zo vaak mee als je wilt!</p>
                                 </div>
                             </div>
                         </template>
@@ -119,7 +121,7 @@ setInterval(() => {
                         <PinInput id="pin-input" v-model="form.code" placeholder="-" class="h-16">
                             <PinInputGroup class="w-full h-16">
                                 <PinInputSlot v-for="(id, index) in 8" :key="id" :index="index"
-                                    class="w-full h-16 dark:bg-white dark:text-black dark:placeholder:text-black/80 text-2xl m-1 uppercase" />
+                                    class="w-full h-16 dark:bg-white dark:text-black dark:placeholder:text-black/80 text-2xl uppercase" />
                             </PinInputGroup>
                         </PinInput>
                         <div v-if="form.errors.code" class="text-red-300 text-sm text-left w-full">&#x2757; {{
