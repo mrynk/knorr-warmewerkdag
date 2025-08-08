@@ -13,7 +13,10 @@ defineProps<{
 </script>
 
 <template>
-    <div class="relative flex min-h-svh flex-col items-center bg-black">
+    <div class="relative flex min-h-svh flex-col items-center bg-[#4E8B45]">
+        <div class="max-w-lg w-full h-auto p-4">
+            <img src="/static/title.png" alt="Soep op? Tijd voor je prijs@" class="w-full h-auto" data-reveal-me />
+        </div>
         <RewardsHeader :class="noSpacing ? 'fixed top-0 left-0 w-full' : ''" />
         <div class="relative z-10 w-full" data-reveal-me>
             <div class="w-full h-[100px] bg-gradient-to-b from-black/0 to-black/80 absolute -top-[100px] left-0"></div>

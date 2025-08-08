@@ -72,8 +72,6 @@ setInterval(() => {
                         class="absolute z-20 -top-10 left-1/2 -translate-x-1/2 w-6 h-6 xl:h-10 xl:w-10 animate-bounce"
                         v-show="y === 0" />
                 </Transition>
-                <img src="/static/title.png" alt="Soep op? Tijd voor je prijs@" class="w-full h-auto" data-reveal-me />
-
                 <div class="relative flex flex-col gap-4 w-full items-center" data-reveal-me>
                     <div class="w-full bg-white rounded-xl text-black text-center py-16" v-if="revealDelay">
                         <span class="text-xl font-bold py-16">
