@@ -18,20 +18,21 @@ class ValidCode implements ValidationRule
         $decoded = $sqids->decode($value);
 
         if (empty($decoded) || count($decoded) !== 2) {
-            $fail('Ongeldige actiecode (001)');
+            $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (001)');
+
             return;
         }
 
         [$batchNumber, $serialNumber] = $decoded;
 
-        if( $sqids->encode([ $batchNumber, $serialNumber ] ) !== $value ) {
-            $fail('Ongeldige actiecode (002)');
+        if ($sqids->encode([$batchNumber, $serialNumber]) !== $value) {
+            $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (002)');
         }
 
         $batch = config('unique_codes.batches')[$batchNumber];
 
-        if (!$batch || $batch['amount'] < $serialNumber) {
-            $fail('Ongeldige actiecode (004)');
+        if (! $batch || $batch['amount'] < $serialNumber) {
+            $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (004)');
         }
     }
 }

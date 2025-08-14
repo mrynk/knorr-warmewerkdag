@@ -1,0 +1,22 @@
+{
+    "kachel": {
+        "name": "kachel",
+        "description": "Een energiezuinige desktop kachel"
+    },
+    "sokken": {
+        "name": "sokken",
+        "description": "Een paar warme cozy sokken"
+    },
+    "kruik": {
+        "name": "kruik",
+        "description": "Een oplaadbare kruik"
+    },
+    "kussen": {
+        "name": "kussen",
+        "description": "Een heerlijk warm kussen"
+    },
+    "deken": {
+        "name": "deken",
+        "description": "Een elektrisch deken"
+    }
+}

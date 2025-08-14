@@ -1,0 +1,30 @@
+{
+    "harira": {
+        "id": "harira",
+        "video": "/static/video/harira.mp4",
+        "name": "Marokkaanse Harira",
+        "advise": "rode-curry",
+        "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
+    },
+    "zoete-aardappel": {
+        "id": "zoete-aardappel",
+        "video": "/static/video/zoete-aardappel.mp4",
+        "name": "Zoete Aardappel",
+        "advise": "harira",
+        "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
+    },
+    "tom-kha-kai": {
+        "id": "tom-kha-kai",
+        "video": "/static/video/tom-kha-kai.mp4",
+        "name": "Tom Kha Kai",
+        "advise": "zoete-aardappel",
+        "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
+    },
+    "rode-curry": {
+        "id": "rode-curry",
+        "video": "/static/video/rode-curry.mp4",
+        "name": "Rode Curry",
+        "advise": "tom-kha-kai",
+        "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
+    }
+}

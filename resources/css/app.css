@@ -9,7 +9,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+    font-family: 'Hackney Vector';
+    src: url('/static/fonts/Hackney.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+
 @theme inline {
+    --font-title: 'Hackney Vector', sans-serif;
     --breakpoint-xs: 30rem;
 
     --font-sans: Roboto, Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -85,6 +96,7 @@
 
     body,
     html {
+
         --font-sans:
             'Roboto', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     }

@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        $soups = json_decode(file_get_contents(base_path('resources/soups.json')), true);
 
         return [
             ...parent::share($request),
@@ -50,6 +51,8 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'soups' => $soups,
+            'soup_of_the_day' => array_values($soups)[now()->dayOfYear() % 3],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
