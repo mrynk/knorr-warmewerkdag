@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref, Transition } from 'vue';
+import { onMounted, ref, Transition } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,7 +42,6 @@ onMounted(() => {
         ease: 'sine.out',
         stagger: 0.15
     });
-    console.log('mounted');
 });
 
 
@@ -73,7 +72,7 @@ const focusName = () => {
 </script>
 
 <template>
-    <div class="bg-gradient-to-b from-black via-black to-[#4E8B45]">
+    <div class="bg-gradient-to-b from-black via-black via-60% to-[#4E8B45]">
         <div class="relative flex flex-col items-center w-full max-w-screen overflow-hidden" v-if="!entry">
             <div class="max-w-lg w-full h-auto p-8">
                 <img src="/static/title.png" alt="Soep op? Tijd voor je prijs@" class="w-full h-auto" data-reveal-me />
