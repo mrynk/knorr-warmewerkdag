@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, Transition } from 'vue';
+import { computed, onMounted, ref, Transition } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,8 @@ const props = defineProps<{
     soups: Record<string, { id: string; name: string; advise: string; image: string }>;
     soup_of_the_day: { id: string; name: string; advise: string; image: string };
 }>();
+
+console.log(props.soups, props.entry);
 
 const form = useForm({
     code: '',
@@ -69,6 +71,15 @@ const focusName = () => {
     document.getElementById('name')?.focus();
 };
 
+const footerSoup = computed(() => {
+    if (props.entry && props.entry.soup !== 'andere soep') {
+        return props.soups[props.entry.soup];
+    }
+    return props.soup_of_the_day;
+});
+
+console.log('footerSoup', footerSoup.value);
+
 </script>
 
 <template>
@@ -87,36 +98,35 @@ const focusName = () => {
         </div>
         <div class="relative flex flex-col gap-8 items-center p-6 max-w-xl mx-auto">
             <div class="relative flex flex-col gap-4 w-full items-center" data-reveal-me>
-                <div class="w-full bg-white rounded-xl text-black text-center py-16" v-if="revealDelay">
+                <div class="w-full bg-white rounded-xl text-black text-center py-16 shadow-xl" v-if="revealDelay">
                     <span class="text-xl font-bold py-16">
                         We controleren je code<span class="w-5 inline-block text-left">{{ dots }}</span>
                     </span>
                 </div>
                 <Transition name="fade">
                     <template v-if="!revealDelay">
-                        <div :class="(entry.reward ? 'bg-[#4E8B45]' : 'bg-white') + ' w-full rounded-xl'" v-if="entry">
+                        <div :class="(entry.reward ? 'bg-[#4E8B45]' : 'bg-white') + ' w-full rounded-xl shadow-xl'"
+                            v-if="entry">
                             <div class="flex flex-col gap-4 w-full items-center" v-if="entry.reward">
                                 <div class="p-8 flex flex-col gap-4 items-center">
                                     <img src="/static/reward-title.png" alt="No reward" class="w-full h-auto" />
-                                    <p>Geniet van je {{ entry.soup }},<br />we nemen contact met je op om je prijs
-                                        op te sturen.</p>
                                     <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
                                         class="w-1/2 h-auto" />
                                 </div>
-                                <div class="bg-white text-black w-full rounded-b-xl p-8 text-center">
+                                <div class="bg-white text-black w-full p-4 text-center">
                                     {{ entry.reward.description }}
+                                </div>
+                                <div class=" w-full rounded-b-xl text-center p-4 pb-8">
+                                    <p>Geniet van je {{ soups[entry.soup].name }}!<br />Je ontvangt een e-mail met een
+                                        bevestiging van je prijs op het opgegeven e-mailadres: <strong>{{
+                                            entry.masked_email
+                                            }}</strong>.</p>
                                 </div>
 
                             </div>
                             <div class="flex flex-col gap-4 w-full items-center p-8" v-else>
                                 <img src="/static/no-reward-title.png" alt="No reward" class="w-full h-auto" />
                                 <img src="/static/giphy1.gif" alt="No reward" class="w-full h-auto" />
-                                <!-- Button as="a" type="button"
-                                    class="w-full uppercase bg-[#4E8B45] hover:bg-[#4E8B45]/80 h-auto"
-                                    :href="route('landing')">
-                                    <img src="/static/cta.png" alt="Opnieuw" class="w-1/2 h-auto" />
-                                </Button>
-                                <p class="text-center text-black font-bold text-md">Doe zo vaak mee als je wilt!</p -->
                             </div>
                         </div>
                     </template>
@@ -160,7 +170,7 @@ const focusName = () => {
                                 <SelectValue placeholder="Welke soep heb je gegeten?" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="soup in soups" :key="soup.id" :value="soup.name">
+                                <SelectItem v-for="soup in soups" :key="soup.id" :value="soup.id">
                                     {{ soup.name }}
                                 </SelectItem>
                                 <SelectItem value="andere ">andere soep</SelectItem>
@@ -191,14 +201,18 @@ const focusName = () => {
             <video :src="soup_of_the_day.video" controls class="aspect-1/1 object-cover w-full xl:aspect-16/9" />
         </div>
     </div>
-    <div class="w-full bg-black" v-if="entry">
+    <div class="w-full bg-black">
         <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-4xl mx-auto">
-            <h2 class="text-white text-6xl font-bold text-center font-title">Je Harira op?</h2>
+            <h2 class="text-white text-6xl font-bold text-center font-title">Je {{ footerSoup.name }} op?</h2>
             <p class="text-white text-lg text-center">
-                Probeer onze Rode Curry en doe opnieuw mee! <br />Nét scherp genoeg om je weer op scherp te zetten.
+                Probeer onze {{ soups[footerSoup.advise].name }} en doe opnieuw mee! <br />{{
+                    soups[footerSoup.advise].promo_copy }}
             </p>
             <img src="/static/rewards-visual.jpg" alt="Rewards"
                 class="inline-block w-[150%] max-w-none md:w-full lg:max-w-2xl h-auto" data-reveal-me />
+            <Button class="bg-[#F8BA00] text-white hover:bg-[#F8BA00]/80 cursor-pointer" href="/" as="a" v-if="entry">
+                Probeer het opnieuw!
+            </Button>
         </div>
     </div>
     <div class="w-full bg-white">

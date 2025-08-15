@@ -3,7 +3,7 @@
         <mj-section>
             <mj-column>
 
-                <mj-image width="320px" src="/static/warm-title.png"></mj-image>
+                <mj-image width="320px" src="{{ url('/static/warm-title.png') }}"></mj-image>
 
                 <mj-divider border-color="#F8BA00"></mj-divider>
 
@@ -15,11 +15,11 @@
                             woonplaats)</strong> en we sturen de prijs in week 40 naar je op!</p>
                 </mj-text>
 
-                <mj-image width="160px" src="/static/rewards/kachel.png"></mj-image>
+                <mj-image width="160px" src="{{ url('/static/rewards/kachel.png') }}"></mj-image>
 
                 <mj-text font-size="20px" color="#FFFFFF" align="justify" line-height="1.5">
                     <p>Alvast heel veel plezier met je prijs!<br />
-                        Team warmewerkdag.nl</p>
+                        Team warmewerkdag</p>
                 </mj-text>
 
                 <mj-divider border-color="#F8BA00"></mj-divider>
