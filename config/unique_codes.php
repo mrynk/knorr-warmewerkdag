@@ -16,7 +16,11 @@ return [
         ],
         [
             'name' => 'testbatch',
-            'amount' => env('TEST_BATCH_AMOUNT', 0),
+            'amount' => env('TEST_BATCH_AMOUNT', 2000),
+        ],
+        [
+            'name' => 'batch3',
+            'amount' => 250000,
         ],
     ],
 ];
