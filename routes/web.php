@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\LandingController;
 use App\Mail\RewardConfirmationEmail;
-use App\Models\Entry;
+use App\Models\Reward;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,7 +15,7 @@ Route::controller(LandingController::class)->group(function () {
     Route::post('/redeem', 'redeem')->name('redeem')->middleware('throttle:redeem');
     Route::get('/result/{code}', 'result')->name('result');
     Route::get('/email', function () {
-        return new RewardConfirmationEmail(Entry::find(8));
+        return new RewardConfirmationEmail(Reward::first()->entry);
     });
 });
 

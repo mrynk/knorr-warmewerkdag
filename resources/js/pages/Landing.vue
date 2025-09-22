@@ -114,8 +114,8 @@ console.log('footerSoup', footerSoup.value);
                                     <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
                                         class="w-1/2 h-auto" />
                                 </div>
-                                <div class="bg-white text-black w-full p-4 text-center">
-                                    {{ entry.reward.description }}
+                                <div class="bg-white text-black w-full p-4 text-center"
+                                    v-html="entry.reward.description">
                                 </div>
                                 <div class=" w-full rounded-b-xl text-center p-4 pb-8">
                                     <p class="text-sm">*Je ontvangt een mail op
@@ -210,8 +210,8 @@ console.log('footerSoup', footerSoup.value);
                 Probeer onze {{ soups[footerSoup.advise].name }} en doe opnieuw mee! <br />{{
                     soups[footerSoup.advise].promo_copy }}
             </p>
-            <img :src="`/static/${footerSoup.id}.jpg`" alt="Rewards"
-                class="inline-block w-[150%] max-w-none md:w-full lg:max-w-2xl h-auto" data-reveal-me />
+            <img :src="`/static/${footerSoup.id}.jpg`" alt="Rewards" class="inline-block md:w-full lg:max-w-2xl h-auto"
+                data-reveal-me />
             <Button class="bg-[#F8BA00] text-white hover:bg-[#F8BA00]/80 cursor-pointer" href="/" as="a" v-if="entry">
                 Probeer het opnieuw!
             </Button>
