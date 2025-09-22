@@ -15,7 +15,7 @@ Route::controller(LandingController::class)->group(function () {
     Route::post('/redeem', 'redeem')->name('redeem')->middleware('throttle:redeem');
     Route::get('/result/{code}', 'result')->name('result');
     Route::get('/email', function () {
-        return new RewardConfirmationEmail(new Entry);
+        return new RewardConfirmationEmail(Entry::find(8));
     });
 });
 

@@ -37,8 +37,14 @@ class RewardConfirmationEmail extends Mailable
      */
     public function content(): Content
     {
+        $rewards = json_decode(file_get_contents(base_path('resources/rewards.json')), true);
+
         return new Content(
             view: 'emails.reward-confirmation',
+            with: [
+                'entry' => $this->entry,
+                'reward' => $rewards[$this->entry->reward->name],
+            ],
         );
     }
 

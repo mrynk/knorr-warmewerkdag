@@ -1,22 +1,27 @@
 {
     "kachel": {
         "name": "kachel",
-        "description": "Een energiezuinige desktop kachel"
+        "title": "Mini Kachel",
+        "description": "De energiezuinige kachel.<br />Want je werkplek verdient ook warmte!"
     },
     "sokken": {
         "name": "sokken",
-        "description": "Een paar warme cozy sokken"
+        "title": "paar sokken van Soxs",
+        "description": "De sokken van Soxs. Zachte merinowol die ademt en niet kriebelt.<br />Nooit meer koude voeten en van top tot teen klaar voor je werkdag!"
     },
     "kruik": {
         "name": "kruik",
-        "description": "Een oplaadbare kruik"
+        "title": "Stoov Homey",
+        "description": "De Homey van Stoov. Een oplaadbaar warmtekussen vermomd als kruik.<br />Omdat jij net zoveel aandacht verdient als je deadlines!"
     },
     "kussen": {
         "name": "kussen",
-        "description": "Een heerlijk warm kussen"
+        "title": "Stoov Ploov",
+        "description": "De Ploov van Stoov. Een heerlijke oplaadbare warmtekussen.<br />Nu heb je warmte voor zowel je buik als je lichaam."
     },
     "deken": {
         "name": "deken",
-        "description": "Een elektrisch deken"
+        "title": "Stoov Big Hug",
+        "description": "De Big Hug van Stoov. Een oplaadbare stoelverwarmer.<br />Jouw hele werkdag wordt één grote warme knuffel!"
     }
 }

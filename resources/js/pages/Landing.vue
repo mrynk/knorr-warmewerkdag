@@ -110,6 +110,7 @@ console.log('footerSoup', footerSoup.value);
                             <div class="flex flex-col gap-4 w-full items-center" v-if="entry.reward">
                                 <div class="p-8 flex flex-col gap-4 items-center">
                                     <img src="/static/reward-title.png" alt="No reward" class="w-full h-auto" />
+                                    <p>Geniet van je {{ soups[entry.soup].name }} en je prijs komt eraan*</p>
                                     <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
                                         class="w-1/2 h-auto" />
                                 </div>
@@ -117,10 +118,11 @@ console.log('footerSoup', footerSoup.value);
                                     {{ entry.reward.description }}
                                 </div>
                                 <div class=" w-full rounded-b-xl text-center p-4 pb-8">
-                                    <p>Geniet van je {{ soups[entry.soup].name }}!<br />Je ontvangt een e-mail met een
-                                        bevestiging van je prijs op het opgegeven e-mailadres: <strong>{{
+                                    <p class="text-sm">*Je ontvangt een mail op
+                                        <strong>{{
                                             entry.masked_email
-                                            }}</strong>.</p>
+                                            }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
+                                    </p>
                                 </div>
 
                             </div>
@@ -208,7 +210,7 @@ console.log('footerSoup', footerSoup.value);
                 Probeer onze {{ soups[footerSoup.advise].name }} en doe opnieuw mee! <br />{{
                     soups[footerSoup.advise].promo_copy }}
             </p>
-            <img src="/static/rewards-visual.jpg" alt="Rewards"
+            <img :src="`/static/${footerSoup.id}.jpg`" alt="Rewards"
                 class="inline-block w-[150%] max-w-none md:w-full lg:max-w-2xl h-auto" data-reveal-me />
             <Button class="bg-[#F8BA00] text-white hover:bg-[#F8BA00]/80 cursor-pointer" href="/" as="a" v-if="entry">
                 Probeer het opnieuw!
@@ -217,7 +219,7 @@ console.log('footerSoup', footerSoup.value);
     </div>
     <div class="w-full bg-white">
         <div class="flex flex-col md:flex-row items-center justify-center gap-4 px-6 py-8">
-            <img src="/static/ufs-primary_logo.svg" alt="UFS Logo" class="h-12" />
+            <img src="/static/brandbar.svg" alt="UFS Logo" class="h-12" />
             <a href="/static/actievoorwaarden.pdf" class="text-black text-sm underline">Actievoorwaarden</a>
             <p class="text-black text-sm text-center">Voor vragen omtrent deze actie kun je contact opnemen met
                 de <a href="mailto:de.klantenservice@ufs.nl?subject=warmewerkdag.nl"
