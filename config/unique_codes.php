@@ -22,5 +22,9 @@ return [
             'name' => 'batch3',
             'amount' => 250000,
         ],
+        [
+            'name' => 'batch4',
+            'amount' => 60000,
+        ],
     ],
 ];

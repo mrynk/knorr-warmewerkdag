@@ -2,7 +2,7 @@
     "kachel": {
         "name": "kachel",
         "title": "Mini Kachel",
-        "description": "De energiezuinige kachel.<br />Want je werkplek verdient ook warmte!"
+        "description": "De energiezuinige mini-kachel.<br />Want je werkplek verdient ook warmte!"
     },
     "sokken": {
         "name": "sokken",
@@ -17,11 +17,11 @@
     "kussen": {
         "name": "kussen",
         "title": "Stoov Ploov",
-        "description": "De Ploov van Stoov. Een heerlijke oplaadbare warmtekussen.<br />Nu heb je warmte voor zowel je buik als je lichaam."
+        "description": "De Ploov van Stoov. Een oplaadbare warmtekussen.<br />Nu heb je warmte voor zowel je buik als je lichaam."
     },
     "deken": {
         "name": "deken",
         "title": "Stoov Big Hug",
-        "description": "De Big Hug van Stoov. Een oplaadbare stoelverwarmer.<br />Jouw hele werkdag wordt één grote warme knuffel!"
+        "description": "De Big Hug van Stoov. Een oplaadbare stoelverwarmer.<br />Jouw werkdag wordt één grote warme knuffel!"
     }
 }

@@ -110,7 +110,7 @@ console.log('footerSoup', footerSoup.value);
                             <div class="flex flex-col gap-4 w-full items-center" v-if="entry.reward">
                                 <div class="p-8 flex flex-col gap-4 items-center">
                                     <img src="/static/reward-title.png" alt="No reward" class="w-full h-auto" />
-                                    <p>Geniet van je {{ soups[entry.soup].name }} en je prijs komt eraan*</p>
+                                    <p>Geniet van je {{ soups[entry.soup].name }}, je prijs komt eraan*</p>
                                     <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
                                         class="w-1/2 h-auto" />
                                 </div>
@@ -200,7 +200,8 @@ console.log('footerSoup', footerSoup.value);
         <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-4xl mx-auto">
             <img src="/static/soup-title.png" alt="Duik in de soep met onze chefs"
                 class="w-3/4 h-auto md:my-8 max-w-xl" />
-            <video :src="soup_of_the_day.video" controls class="aspect-1/1 object-cover w-full xl:aspect-16/9" />
+            <video :src="soup_of_the_day.video" controls
+                class="aspect-4/5 object-cover w-full xl:aspect-4/5 xl:w-2/3" />
         </div>
     </div>
     <div class="w-full bg-black">
@@ -210,8 +211,8 @@ console.log('footerSoup', footerSoup.value);
                 Probeer onze {{ soups[footerSoup.advise].name }} en doe opnieuw mee! <br />{{
                     soups[footerSoup.advise].promo_copy }}
             </p>
-            <img :src="`/static/${footerSoup.id}.jpg`" alt="Rewards" class="inline-block md:w-full lg:max-w-2xl h-auto"
-                data-reveal-me />
+            <img :src="`/static/${soups[footerSoup.advise].id}.jpg`" alt="Rewards"
+                class="inline-block md:w-full lg:max-w-2xl h-auto" data-reveal-me />
             <Button class="bg-[#F8BA00] text-white hover:bg-[#F8BA00]/80 cursor-pointer" href="/" as="a" v-if="entry">
                 Probeer het opnieuw!
             </Button>

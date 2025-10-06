@@ -1,8 +1,8 @@
 {
-    "harira": {
-        "id": "harira",
+    "turkse-linzen": {
+        "id": "turkse-linzen",
         "video": "/static/video/harira.mp4",
-        "name": "Marokkaanse Harira",
+        "name": "Turkse Linzensoep",
         "advise": "rode-curry",
         "promo_copy": "Comfortfood met karakter.",
         "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
@@ -10,8 +10,8 @@
     "zoete-aardappel": {
         "id": "zoete-aardappel",
         "video": "/static/video/zoete-aardappel.mp4",
-        "name": "Zoete Aardappel",
-        "advise": "harira",
+        "name": "Zoete Aardappelsoep",
+        "advise": "turkse-linzen",
         "promo_copy": "Een heerlijke, warme break die voelt als ‘even helemaal niks’",
         "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
     },
@@ -20,7 +20,7 @@
         "video": "/static/video/tom-kha-kai.mp4",
         "name": "Tom Kha Kai",
         "advise": "zoete-aardappel",
-        "promo_copy": "Een powernap voor je hoofd in soepvorm.",
+        "promo_copy": "\"Een powernap tijdens de lunch.\"",
         "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
     },
     "rode-curry": {
@@ -28,7 +28,7 @@
         "video": "/static/video/rode-curry.mp4",
         "name": "Rode Curry",
         "advise": "tom-kha-kai",
-        "promo_copy": "Nét scherp genoeg om je weer op scherp te zetten.",
+        "promo_copy": "Nét pittig genoeg om je weer op scherp te zetten.",
         "image": "https://www.foodieinc.com/wp-content/uploads/2021/05/Harira.jpg"
     }
 }
