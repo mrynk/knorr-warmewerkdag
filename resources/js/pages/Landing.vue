@@ -110,7 +110,7 @@ console.log('footerSoup', footerSoup.value);
                             <div class="flex flex-col gap-4 w-full items-center" v-if="entry.reward">
                                 <div class="p-8 flex flex-col gap-4 items-center">
                                     <img src="/static/reward-title.png" alt="No reward" class="w-full h-auto" />
-                                    <p>Geniet van je {{ soups[entry.soup].name }}, je prijs komt eraan*</p>
+                                    <p>Geniet van je soep, je prijs komt eraan*</p>
                                     <img :src="`/static/rewards/${entry.reward.name}.png`" :alt="entry.reward.name"
                                         class="w-1/2 h-auto" />
                                 </div>
@@ -121,7 +121,7 @@ console.log('footerSoup', footerSoup.value);
                                     <p class="text-sm">*Je ontvangt een mail op
                                         <strong>{{
                                             entry.masked_email
-                                            }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
+                                        }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
                                     </p>
                                 </div>
 
