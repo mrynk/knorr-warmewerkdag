@@ -121,7 +121,7 @@ console.log('footerSoup', footerSoup.value);
                                     <p class="text-sm">*Je ontvangt een mail op
                                         <strong>{{
                                             entry.masked_email
-                                            }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
+                                        }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
                                     </p>
                                 </div>
 
@@ -200,7 +200,7 @@ console.log('footerSoup', footerSoup.value);
         <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-4xl mx-auto">
             <img src="/static/soup-title.png" alt="Duik in de soep met onze chefs"
                 class="w-3/4 h-auto md:my-8 max-w-xl" />
-            <video :src="soup_of_the_day.video" controls
+            <video :src="soup_of_the_day.video" controls inline
                 class="aspect-4/5 object-cover w-full xl:aspect-4/5 xl:w-2/3" />
         </div>
     </div>
