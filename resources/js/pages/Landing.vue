@@ -121,7 +121,7 @@ console.log('footerSoup', footerSoup.value);
                                     <p class="text-sm">*Je ontvangt een mail op
                                         <strong>{{
                                             entry.masked_email
-                                        }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
+                                            }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
                                     </p>
                                 </div>
 
@@ -208,8 +208,7 @@ console.log('footerSoup', footerSoup.value);
         <div class="flex flex-col gap-8 items-center px-6 py-10 max-w-4xl mx-auto">
             <h2 class="text-white text-6xl font-bold text-center font-title">Je {{ footerSoup.name }} op?</h2>
             <p class="text-white text-lg text-center">
-                Probeer onze {{ soups[footerSoup.advise].name }} en doe opnieuw mee! <br />{{
-                    soups[footerSoup.advise].promo_copy }}
+                Probeer onze {{ soups[footerSoup.advise].name }} en doe opnieuw mee!
             </p>
             <img :src="`/static/${soups[footerSoup.advise].id}.jpg`" alt="Rewards"
                 class="inline-block md:w-full lg:max-w-2xl h-auto" data-reveal-me />
