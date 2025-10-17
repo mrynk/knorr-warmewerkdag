@@ -1,7 +1,6 @@
 <mjml lang="nl">
     <mj-body background-color="#000000">
-        <mj-section background-url="{{ url('/static/mail-bg.jpg') }}" background-size="cover"
-            background-repeat="no-repeat">
+        <mj-section background-color="#2f6830">
             <mj-column>
 
                 <mj-image width="320px" src="{{ url('/static/warm-title.png') }}"></mj-image>
@@ -15,6 +14,11 @@
 
                 <mj-image width="160px" src="{{ url('/static/rewards/' . $entry->reward->name . '.png') }}"></mj-image>
 
+            </mj-column>
+        </mj-section>
+        <mj-section background-url="{{ url('/static/mail-bg.jpg') }}" background-size="100% 100%"
+            background-repeat="no-repeat">
+            <mj-column>
                 <mj-text font-size="16px" color="#FFFFFF" align="justify" line-height="1.5">
 
                     <p>Wat leuk dat je meedoet aan de soepactie 'Warm je werkdag op'. Lees om je prijs te ontvangen
