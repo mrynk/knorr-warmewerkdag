@@ -53,7 +53,7 @@ class GenerateRewards extends Command
         // Select all Reward records and write the records to a csv file called timesweep.csv
 
         // Get all Reward records
-        $rewards = \App\Models\Reward::all();
+        $rewards = \App\Models\Reward::orderBy('release_at')->get();
 
         // Open (or create) the CSV file for writing
         $csvFile = fopen(resource_path('timesweep.csv'), 'w');
