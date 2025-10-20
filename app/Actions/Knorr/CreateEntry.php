@@ -34,7 +34,7 @@ final class CreateEntry
             ]);
 
             if ($entry->reward) {
-                Mail::to($entry->email)->send(new RewardConfirmationEmail($entry));
+                Mail::to($entry->email)->queue(new RewardConfirmationEmail($entry));
             }
         });
 
