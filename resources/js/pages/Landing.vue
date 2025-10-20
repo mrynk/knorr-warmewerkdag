@@ -72,7 +72,7 @@ const focusName = () => {
 };
 
 const footerSoup = computed(() => {
-    if (props.entry && props.entry.soup !== 'andere soep') {
+    if (props.entry && props.entry.soup !== 'andere') {
         return props.soups[props.entry.soup];
     }
     return props.soup_of_the_day;
@@ -121,7 +121,7 @@ console.log('footerSoup', footerSoup.value);
                                     <p class="text-sm">*Je ontvangt een mail op
                                         <strong>{{
                                             entry.masked_email
-                                        }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
+                                            }}</strong> van ons om je gegevens door te geven. Check mogelijk je spambox.
                                     </p>
                                 </div>
 
