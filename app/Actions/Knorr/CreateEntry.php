@@ -20,12 +20,12 @@ final class CreateEntry
             $sqids = app(\Sqids\Sqids::class);
             [$batchNumber, $serialNumber] = $sqids->decode($data['code']);
 
-            if (env('APP_ENV') !== 'production') {
+            /*if (env('APP_ENV') !== 'production') {
                 if (preg_match('/\+(sokken|kachel|kruik|kussen|deken)@/', $data['email'], $matches)) {
                     $rewardSuffix = $matches[1];
                     $this->createReward->handle($rewardSuffix);
                 }
-            }
+            }*/
 
             $entry = Entry::create([
                 ...$data,
