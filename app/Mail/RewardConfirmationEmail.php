@@ -5,6 +5,7 @@ namespace App\Mail;
 use App\Models\Entry;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -29,6 +30,9 @@ class RewardConfirmationEmail extends Mailable
     {
         return new Envelope(
             subject: 'Je hebt een warme prijs gewonnen!',
+            replyTo: [
+                new Address('de.klantenservice@ufs.nl', 'Warmewerkdag'),
+            ],
         );
     }
 
