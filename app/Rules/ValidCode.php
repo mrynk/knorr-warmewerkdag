@@ -29,6 +29,12 @@ class ValidCode implements ValidationRule
             $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (002)');
         }
 
+        if (! in_array($batchNumber, array_keys(config('unique_codes.batches')))) {
+            $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (003)');
+
+            return;
+        }
+
         $batch = config('unique_codes.batches')[$batchNumber];
 
         if (! $batch || $batch['amount'] < $serialNumber) {
