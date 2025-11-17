@@ -19,6 +19,17 @@ class Entry extends Model
     {
         parent::boot();
         self::created(function ($entry) {
+            // select all rewards that have an Entry model with email address of the entry
+            $rewards = Reward::whereHas('entry', function ($query) use ($entry) {
+                $query->where('email', $entry->email);
+            });
+            if ($rewards->count() > 0) {
+                // user won before
+                \Log::info('User won before', ['email' => $entry->email]);
+
+                return;
+            }
+
             $reward = Reward::where('release_at', '<=', now())->where('entry_id', null)->orderBy('release_at', 'asc')->first();
             if ($reward) {
                 $reward->entry()->associate($entry);
