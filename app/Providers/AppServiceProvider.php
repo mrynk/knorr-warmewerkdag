@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Views\Engines\MJMLEngine;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,7 +29,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        RateLimiter::for('redeem', function (Request $request) {
+            return Limit::perMinute(10);
+        });
+        View::getEngineResolver()->register('mjml', function () {
+            return new MJMLEngine;
+        });
+
+        View::addExtension('mjml.blade.php', 'mjml');
     }
 
     /**
@@ -34,10 +46,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Convert string to array of characters
         $chars = str_split($string);
-        
+
         // Set the random seed for consistent shuffling
         mt_srand($seed);
-        
+
         // Shuffle the array using Fisher-Yates algorithm with seeded random
         $length = count($chars);
         for ($i = $length - 1; $i > 0; $i--) {
@@ -47,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
             $chars[$i] = $chars[$j];
             $chars[$j] = $temp;
         }
-        
+
         // Convert back to string
         return implode('', $chars);
     }
