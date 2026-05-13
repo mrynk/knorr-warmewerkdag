@@ -2,29 +2,13 @@
 
 return [
     'alphabet' => 'ACDEFGHJKLMNPQRTUVWXYZ234679',
-    'seed' => 785,
+    'seed' => 2577046578204578498,
     'min_length' => 8,
 
     'batches' => [
         [
-            'name' => 'initial',
-            'amount' => 50000,
-        ],
-        [
-            'name' => 'batch2',
-            'amount' => 25000,
-        ],
-        [
-            'name' => 'testbatch',
-            'amount' => env('TEST_BATCH_AMOUNT', 2000),
-        ],
-        [
-            'name' => 'batch3',
-            'amount' => 250000,
-        ],
-        [
-            'name' => 'batch4',
-            'amount' => 60000,
+            'name' => 'Appel',
+            'amount' => 56250,
         ],
     ],
 ];
