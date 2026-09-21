@@ -6,18 +6,11 @@
         "advise": "rode-curry",
         "promo_copy": "Comfortfood met karakter."
     },
-    "zoete-aardappel": {
-        "id": "zoete-aardappel",
-        "video": "/static/video/zoete-aardappel.mp4",
-        "name": "Zoete Aardappelsoep",
-        "advise": "turkse-linzen",
-        "promo_copy": "Een heerlijke, warme break die voelt als ‘even helemaal niks’"
-    },
     "tom-kha-kai": {
         "id": "tom-kha-kai",
         "video": "/static/video/tom-kha-kai.mp4",
         "name": "Tom Kha Kai",
-        "advise": "zoete-aardappel",
+        "advise": "turkse-linzen",
         "promo_copy": "\"Een powernap tijdens de lunch.\""
     },
     "rode-curry": {
