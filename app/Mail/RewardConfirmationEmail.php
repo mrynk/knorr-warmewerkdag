@@ -1,57 +1,54 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail;
 
 use App\Models\Entry;
+use App\Models\Reward;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\File;
 
-class RewardConfirmationEmail extends Mailable
+final class RewardConfirmationEmail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(
-        public Entry $entry
-    ) {
-        //
-    }
+    public function __construct(public Entry $entry) {}
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Je hebt een warme prijs gewonnen!'
+            subject: 'Je hebt een warme prijs gewonnen!',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
-        $rewards = json_decode(file_get_contents(base_path('resources/rewards.json')), true);
+        $reward = $this->entry->reward;
+
+        abort_unless($reward instanceof Reward, 404);
+
+        /** @var array<string, array{name: string, title: string, description: string, amount: int}> $rewards */
+        $rewards = json_decode(File::get(base_path('resources/rewards.json')), true, flags: JSON_THROW_ON_ERROR);
 
         return new Content(
             view: 'emails.reward-confirmation',
             with: [
                 'entry' => $this->entry,
-                'reward' => $rewards[$this->entry->reward->name],
+                'reward' => $rewards[$reward->name],
             ],
         );
     }
 
     /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return list<Attachment>
      */
     public function attachments(): array
     {

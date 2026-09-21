@@ -1,6 +1,7 @@
 export default interface Entry {
-    id: number;
     code: string;
+    name: string;
+    soup: string;
     masked_email: string;
-    reward?: { name: string };
+    reward?: { name: string; description: string };
 }

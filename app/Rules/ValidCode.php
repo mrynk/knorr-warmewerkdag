@@ -1,23 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Sqids\Sqids;
 
-class ValidCode implements ValidationRule
+final readonly class ValidCode implements ValidationRule
 {
-    /**
-     * Run the validation rule.
-     *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     */
+    public function __construct(private Sqids $sqids) {}
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $sqids = app(\Sqids\Sqids::class);
-        $decoded = $sqids->decode($value);
+        if (! is_string($value)) {
+            $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (001)');
 
-        if (empty($decoded) || count($decoded) !== 2) {
+            return;
+        }
+
+        $decoded = $this->sqids->decode($value);
+
+        if (count($decoded) !== 2) {
             $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (001)');
 
             return;
@@ -25,19 +30,22 @@ class ValidCode implements ValidationRule
 
         [$batchNumber, $serialNumber] = $decoded;
 
-        if ($sqids->encode([$batchNumber, $serialNumber]) !== $value) {
+        if ($this->sqids->encode([$batchNumber, $serialNumber]) !== $value) {
             $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (002)');
+
+            return;
         }
 
-        if (! in_array($batchNumber, array_keys(config('unique_codes.batches')))) {
+        /** @var array<int, array{name: string, amount: int}> $batches */
+        $batches = config('unique_codes.batches');
+
+        if (! array_key_exists($batchNumber, $batches)) {
             $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (003)');
 
             return;
         }
 
-        $batch = config('unique_codes.batches')[$batchNumber];
-
-        if (! $batch || $batch['amount'] < $serialNumber) {
+        if ($batches[$batchNumber]['amount'] < $serialNumber) {
             $fail('Dit is een ongeldige actiecode. Controlleer je code en probeer het opnieuw (004)');
         }
     }

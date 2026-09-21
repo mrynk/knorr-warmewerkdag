@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'alphabet' => 'ACDEFGHJKLMNPQRTUVWXYZ234679',
     'seed' => 2577046578204578498,

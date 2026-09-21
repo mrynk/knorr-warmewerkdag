@@ -1,17 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Inertia\Middleware;
-use Tighten\Ziggy\Ziggy;
 
-class HandleInertiaRequests extends Middleware
+final class HandleInertiaRequests extends Middleware
 {
     /**
-     * The root template that's loaded on the first page visit.
-     *
      * @see https://inertiajs.com/server-side-setup#root-template
      *
      * @var string
@@ -19,8 +18,6 @@ class HandleInertiaRequests extends Middleware
     protected $rootView = 'app';
 
     /**
-     * Determines the current asset version.
-     *
      * @see https://inertiajs.com/asset-versioning
      */
     public function version(Request $request): ?string
@@ -29,31 +26,21 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
-     * Define the props that are shared by default.
-     *
      * @see https://inertiajs.com/shared-data
      *
      * @return array<string, mixed>
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-        $soups = json_decode(file_get_contents(base_path('resources/soups.json')), true);
+        /** @var array<string, array{id: string, name: string, advise: string, video: string}> $soups */
+        $soups = json_decode(File::get(base_path('resources/soups.json')), true, flags: JSON_THROW_ON_ERROR);
+        $soupIds = array_values($soups);
 
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
-            'auth' => [
-                'user' => $request->user(),
-            ],
-            'ziggy' => [
-                ...(new Ziggy)->toArray(),
-                'location' => $request->url(),
-            ],
             'soups' => $soups,
-            'soup_of_the_day' => array_values($soups)[now()->dayOfYear() % 3],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'soup_of_the_day' => $soupIds[now()->dayOfYear % count($soupIds)],
         ];
     }
 }

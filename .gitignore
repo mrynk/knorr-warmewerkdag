@@ -4,8 +4,12 @@
 /public/build
 /public/hot
 /public/storage
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder
 /storage/*.key
 /storage/pail
+/tests/Browser/Screenshots
 /vendor
 .env
 .env.backup

@@ -1,25 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Views\Engines;
 
+use Closure;
 use Illuminate\Contracts\View\Engine;
 use Illuminate\Support\Facades\Blade;
-use Spatie\Mjml\Mjml;
+use Illuminate\Support\Facades\File;
 
-class MJMLEngine implements Engine
+final readonly class MJMLEngine implements Engine
 {
-    public function get($path, array $data = [])
-    {
-        // Compile la vue Blade en HTML
-        $viewContent = file_get_contents($path);
-        $compiledView = Blade::render($viewContent, $data);
+    /**
+     * @param  Closure(string): string  $converter
+     */
+    public function __construct(private Closure $converter) {}
 
-        // Post-process avec MJML
-        return Mjml::new()
-            ->beautify(false)
-            ->minify(true)
-            ->keepComments(false)
-            ->convert($compiledView, ...[])
-            ->html();
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function get($path, array $data = []): string
+    {
+        $compiledView = Blade::render(File::get($path), $data);
+
+        return ($this->converter)($compiledView);
     }
 }

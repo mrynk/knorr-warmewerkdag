@@ -1,32 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
+use App\Rules\CampaignEmail;
 use App\Rules\ValidCode;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateEntryRequest extends FormRequest
+final class CreateEntryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, list<ValidationRule|string>>
      */
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:8', new ValidCode],
-            'name' => 'required|string|max:255',
-            'email' => 'required|email:rfc,dns,strict,filter,spoof|max:255',
-            'soup' => 'required|string|max:255',
+            'code' => ['required', 'string', 'max:8', resolve(ValidCode::class)],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => CampaignEmail::rules(strictDns: ! app()->runningUnitTests()),
+            'soup' => ['required', 'string', 'max:255'],
         ];
+    }
+
+    /**
+     * @return array{code: string, name: string, email: string, soup: string}
+     */
+    public function entryData(): array
+    {
+        /** @var array{code: string, name: string, email: string, soup: string} $data */
+        $data = $this->safe()->only(['code', 'name', 'email', 'soup']);
+
+        return $data;
     }
 }
