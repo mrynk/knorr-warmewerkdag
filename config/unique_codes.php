@@ -32,5 +32,9 @@ return [
             'name' => 'Zorg',
             'amount' => 30000,
         ],
+        [
+            'name' => 'Cirfood',
+            'amount' => 4000,
+        ],
     ],
 ];

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Exceptions\DailySubmissionLimitReached;
 use App\Mail\RewardConfirmationEmail;
 use App\Models\Entry;
 use App\Models\Reward;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Sqids\Sqids;
@@ -23,23 +25,44 @@ final readonly class CreateEntry
      */
     public function handle(array $data): Entry
     {
-        return DB::transaction(function () use ($data): Entry {
-            $decoded = $this->sqids->decode($data['code']);
-            [$batchNumber, $serialNumber] = $decoded;
+        $email = mb_strtolower($data['email']);
 
-            $entry = Entry::query()->create([
-                ...$data,
-                'batch_number' => $batchNumber,
-                'serial_number' => $serialNumber,
-            ]);
+        return Cache::lock('entry-daily:'.hash('xxh128', $email), 10)->block(5, function () use ($data, $email): Entry {
+            return DB::transaction(function () use ($data, $email): Entry {
+                $this->ensureWithinDailyLimit($email);
 
-            $reward = $this->assignReward->handle($entry);
+                $decoded = $this->sqids->decode($data['code']);
+                [$batchNumber, $serialNumber] = $decoded;
 
-            if ($reward instanceof Reward) {
-                Mail::to($entry->email)->queue(new RewardConfirmationEmail($entry->load('reward')));
-            }
+                $entry = Entry::query()->create([
+                    ...$data,
+                    'batch_number' => $batchNumber,
+                    'serial_number' => $serialNumber,
+                ]);
 
-            return $entry->load('reward');
+                $reward = $this->assignReward->handle($entry);
+
+                if ($reward instanceof Reward) {
+                    Mail::to($entry->email)->queue(new RewardConfirmationEmail($entry->load('reward')));
+                }
+
+                return $entry->load('reward');
+            });
         });
+    }
+
+    private function ensureWithinDailyLimit(string $email): void
+    {
+        $startOfDay = now()->startOfDay();
+
+        $submissionsToday = Entry::query()
+            ->whereRaw('lower(email) = ?', [$email])
+            ->where('created_at', '>=', $startOfDay)
+            ->where('created_at', '<', $startOfDay->copy()->addDay())
+            ->count();
+
+        if ($submissionsToday >= DailySubmissionLimitReached::LIMIT) {
+            throw new DailySubmissionLimitReached;
+        }
     }
 }

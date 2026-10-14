@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\CreateEntry;
+use App\Exceptions\DailySubmissionLimitReached;
 use App\Http\Requests\CreateEntryRequest;
 use App\Models\Entry;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
@@ -28,6 +30,12 @@ final readonly class LandingController
     {
         try {
             $entry = $createEntry->handle($request->entryData());
+        } catch (DailySubmissionLimitReached $exception) {
+            return to_route('landing')->withErrors(['email' => $exception->getMessage()]);
+        } catch (LockTimeoutException) {
+            return to_route('landing')->withErrors([
+                'message' => 'Te veel aanvragen, probeer het later opnieuw.',
+            ]);
         } catch (UniqueConstraintViolationException $exception) {
             Log::error('Duplicate entry attempt', ['error' => $exception->getMessage()]);
 

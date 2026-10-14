@@ -128,6 +128,142 @@ it('returns 404 for a valid code without an entry', function (): void {
     $this->get(route('result', campaignCode(1, 2)))->assertNotFound();
 });
 
+it('stores the fourth redemption for an email today', function (): void {
+    foreach (range(1, 3) as $serialNumber) {
+        Entry::factory()->create([
+            'code' => campaignCode(0, $serialNumber),
+            'batch_number' => 0,
+            'serial_number' => $serialNumber,
+            'email' => 'michel@example.com',
+        ]);
+    }
+
+    $code = campaignCode(0, 4);
+
+    $this->post(route('redeem'), [
+        'code' => $code,
+        'name' => 'Michel',
+        'email' => 'michel@example.com',
+        'soup' => 'turkse-linzen',
+    ])->assertRedirect(route('result', $code));
+
+    $this->assertDatabaseHas('entries', [
+        'code' => $code,
+        'email' => 'michel@example.com',
+    ]);
+});
+
+it('rejects the fifth redemption for an email today', function (): void {
+    foreach (range(1, 4) as $serialNumber) {
+        Entry::factory()->create([
+            'code' => campaignCode(0, $serialNumber),
+            'batch_number' => 0,
+            'serial_number' => $serialNumber,
+            'email' => 'michel@example.com',
+        ]);
+    }
+
+    $this->from(route('landing'))
+        ->post(route('redeem'), [
+            'code' => campaignCode(0, 5),
+            'name' => 'Michel',
+            'email' => 'michel@example.com',
+            'soup' => 'turkse-linzen',
+        ])
+        ->assertRedirect(route('landing'))
+        ->assertSessionHasErrors([
+            'email' => 'Je kunt maximaal 4 codes per dag insturen met dit e-mailadres. Probeer het morgen opnieuw.',
+        ]);
+
+    $this->assertDatabaseMissing('entries', [
+        'code' => campaignCode(0, 5),
+    ]);
+});
+
+it('resets the daily email limit on the next calendar day', function (): void {
+    foreach (range(1, 4) as $serialNumber) {
+        Entry::factory()->create([
+            'code' => campaignCode(0, $serialNumber),
+            'batch_number' => 0,
+            'serial_number' => $serialNumber,
+            'email' => 'michel@example.com',
+            'created_at' => now()->subDay(),
+        ]);
+    }
+
+    $code = campaignCode(0, 5);
+
+    $this->post(route('redeem'), [
+        'code' => $code,
+        'name' => 'Michel',
+        'email' => 'michel@example.com',
+        'soup' => 'turkse-linzen',
+    ])->assertRedirect(route('result', $code));
+
+    $this->assertDatabaseHas('entries', [
+        'code' => $code,
+        'email' => 'michel@example.com',
+    ]);
+});
+
+it('applies the daily limit regardless of email letter case', function (): void {
+    foreach (range(1, 4) as $serialNumber) {
+        Entry::factory()->create([
+            'code' => campaignCode(0, $serialNumber),
+            'batch_number' => 0,
+            'serial_number' => $serialNumber,
+            'email' => 'Michel@Example.com',
+        ]);
+    }
+
+    $this->from(route('landing'))
+        ->post(route('redeem'), [
+            'code' => campaignCode(0, 5),
+            'name' => 'Michel',
+            'email' => 'michel@example.com',
+            'soup' => 'turkse-linzen',
+        ])
+        ->assertRedirect(route('landing'))
+        ->assertSessionHasErrors([
+            'email' => 'Je kunt maximaal 4 codes per dag insturen met dit e-mailadres. Probeer het morgen opnieuw.',
+        ]);
+
+    $this->assertDatabaseCount('entries', 4);
+});
+
+it('does not count an invalid code toward the daily limit', function (): void {
+    foreach (range(1, 3) as $serialNumber) {
+        Entry::factory()->create([
+            'code' => campaignCode(0, $serialNumber),
+            'batch_number' => 0,
+            'serial_number' => $serialNumber,
+            'email' => 'michel@example.com',
+        ]);
+    }
+
+    $this->from(route('landing'))
+        ->post(route('redeem'), [
+            'code' => 'INVALID1',
+            'name' => 'Michel',
+            'email' => 'michel@example.com',
+            'soup' => 'turkse-linzen',
+        ])
+        ->assertRedirect(route('landing'))
+        ->assertSessionHasErrors('code')
+        ->assertSessionDoesntHaveErrors('email');
+
+    $code = campaignCode(0, 4);
+
+    $this->post(route('redeem'), [
+        'code' => $code,
+        'name' => 'Michel',
+        'email' => 'michel@example.com',
+        'soup' => 'turkse-linzen',
+    ])->assertRedirect(route('result', $code));
+
+    $this->assertDatabaseCount('entries', 4);
+});
+
 it('throttles redeem requests', function (): void {
     foreach (range(1, 10) as $serialNumber) {
         $this->post(route('redeem'), [

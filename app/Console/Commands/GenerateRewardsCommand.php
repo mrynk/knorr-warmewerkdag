@@ -36,8 +36,8 @@ final class GenerateRewardsCommand extends Command
 
         /** @var array<string, array{name: string, title: string, description: string, amount: int}> $rewards */
         $rewards = json_decode(File::get(base_path('resources/rewards.json')), true, flags: JSON_THROW_ON_ERROR);
-        $startDate = now()->setDateTime(2025, 11, 3, 0, 0, 0);
-        $endDate = now()->setDateTime(2025, 12, 1, 0, 0, 0);
+        $startDate = now()->setDateTime(2026, 10, 1, 0, 0, 0);
+        $endDate = now()->setDateTime(2026, 12, 1, 0, 0, 0);
 
         foreach ($rewards as $reward => $data) {
             for ($i = 0; $i < $data['amount']; $i++) {
