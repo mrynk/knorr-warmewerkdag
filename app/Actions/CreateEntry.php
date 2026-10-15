@@ -18,6 +18,7 @@ final readonly class CreateEntry
     public function __construct(
         private Sqids $sqids,
         private AssignReward $assignReward,
+        private readonly CreateReward $createReward
     ) {}
 
     /**
@@ -33,6 +34,13 @@ final readonly class CreateEntry
 
                 $decoded = $this->sqids->decode($data['code']);
                 [$batchNumber, $serialNumber] = $decoded;
+
+                 if (env('APP_ENV') !== 'production') {
+                    if (preg_match('/\+(sokken|kachel|kruik|kussen|deken)@/', $data['email'], $matches)) {
+                        $rewardSuffix = $matches[1];
+                        $this->createReward->handle($rewardSuffix);
+                    }
+                }
 
                 $entry = Entry::query()->create([
                     ...$data,
