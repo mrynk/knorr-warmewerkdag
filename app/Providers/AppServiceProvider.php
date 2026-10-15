@@ -31,6 +31,7 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(ConvertMjml $convertMjml): void
     {
         RateLimiter::for('redeem', fn (): Limit => Limit::perMinute(10));
+        RateLimiter::for('winner-address', fn (): Limit => Limit::perMinute(10));
 
         View::getEngineResolver()->register('mjml', fn (): MJMLEngine => new MJMLEngine($convertMjml->handle(...)));
         View::addExtension('mjml.blade.php', 'mjml');

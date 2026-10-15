@@ -46,12 +46,19 @@ it('redeems a valid code and assigns a reward', function (): void {
 
     $code = campaignCode();
 
-    $this->post(route('redeem'), [
+    $response = $this->post(route('redeem'), [
         'code' => $code,
         'name' => 'Michel',
         'email' => 'michel@example.com',
         'soup' => 'turkse-linzen',
-    ])->assertRedirect(route('result', $code));
+    ]);
+
+    $entry = Entry::query()->where('code', $code)->firstOrFail();
+
+    $response->assertRedirect(route('result', [
+        'code' => $code,
+        'token' => $entry->addressToken(),
+    ]));
 
     Mail::assertQueued(RewardConfirmationEmail::class);
 });

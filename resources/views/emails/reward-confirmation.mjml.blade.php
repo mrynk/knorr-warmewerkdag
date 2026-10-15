@@ -24,6 +24,7 @@
                     <p>Wat leuk dat je meedoet aan de soepactie 'Warm je werkdag op'. We nemen zo spoedig mogelijk
                         contact met je op. Houd je mailbox in de gaten!
                     </p>
+                    <p>Heb je je adres al via het formulier met ons gedeeld? Zo niet, <a href="{{ $addressUrl }}" style="color: #F8BA00;">Klik op deze link om je adres door te geven</a>.</p>
                     <p>Psst... heb je al onze andere wereldse smaken geprobeerd? Elke soep = een nieuwe winkans. Warm je
                         werkdag nóg vaker op!</p>
                     <p>Veel plezier met je prijs!<br />

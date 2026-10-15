@@ -10,6 +10,7 @@ Route::controller(LandingController::class)->group(function (): void {
     Route::get('/', 'index')->name('landing');
     Route::post('/redeem', 'store')->name('redeem')->middleware('throttle:redeem');
     Route::get('/result/{code}', 'show')->name('result');
+    Route::post('/result/{code}', 'storeAddress')->name('result.address')->middleware('throttle:winner-address');
 });
 
 Route::get('/email/{code}', RewardConfirmationPreviewController::class)->name('email.preview');

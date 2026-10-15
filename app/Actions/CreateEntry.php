@@ -18,7 +18,7 @@ final readonly class CreateEntry
     public function __construct(
         private Sqids $sqids,
         private AssignReward $assignReward,
-        private readonly CreateReward $createReward
+        private CreateReward $createReward
     ) {}
 
     /**
@@ -28,40 +28,38 @@ final readonly class CreateEntry
     {
         $email = mb_strtolower($data['email']);
 
-        return Cache::lock('entry-daily:'.hash('xxh128', $email), 10)->block(5, function () use ($data, $email): Entry {
-            return DB::transaction(function () use ($data, $email): Entry {
-                $this->ensureWithinDailyLimit($email);
+        return Cache::lock('entry-daily:'.hash('xxh128', $email), 10)->block(5, fn (): Entry => DB::transaction(function () use ($data, $email): Entry {
+            $this->ensureWithinDailyLimit($email);
 
-                $decoded = $this->sqids->decode($data['code']);
-                [$batchNumber, $serialNumber] = $decoded;
+            $decoded = $this->sqids->decode($data['code']);
+            [$batchNumber, $serialNumber] = $decoded;
 
-                 if (env('APP_ENV') !== 'production') {
-                    if (preg_match('/\+(sokken|kachel|kruik|kussen|deken)@/', $data['email'], $matches)) {
-                        $rewardSuffix = $matches[1];
-                        $this->createReward->handle($rewardSuffix);
-                    }
+            if (env('APP_ENV') !== 'production') {
+                if (preg_match('/\+(sokken|kachel|kruik|kussen|deken)@/', $data['email'], $matches)) {
+                    $rewardSuffix = $matches[1];
+                    $this->createReward->handle($rewardSuffix);
                 }
+            }
 
-                $entry = Entry::query()->create([
-                    ...$data,
-                    'batch_number' => $batchNumber,
-                    'serial_number' => $serialNumber,
-                ]);
+            $entry = Entry::query()->create([
+                ...$data,
+                'batch_number' => $batchNumber,
+                'serial_number' => $serialNumber,
+            ]);
 
-                $reward = $this->assignReward->handle($entry);
+            $reward = $this->assignReward->handle($entry);
 
-                if ($reward instanceof Reward) {
-                    Mail::to($entry->email)->queue(new RewardConfirmationEmail($entry->load('reward')));
-                }
+            if ($reward instanceof Reward) {
+                Mail::to($entry->email)->queue(new RewardConfirmationEmail($entry->load('reward')));
+            }
 
-                return $entry->load('reward');
-            });
-        });
+            return $entry->load('reward');
+        }));
     }
 
     private function ensureWithinDailyLimit(string $email): void
     {
-        $startOfDay = now()->startOfDay();
+        $startOfDay = today();
 
         $submissionsToday = Entry::query()
             ->whereRaw('lower(email) = ?', [$email])
@@ -69,8 +67,6 @@ final readonly class CreateEntry
             ->where('created_at', '<', $startOfDay->copy()->addDay())
             ->count();
 
-        if ($submissionsToday >= DailySubmissionLimitReached::LIMIT) {
-            throw new DailySubmissionLimitReached;
-        }
+        throw_if($submissionsToday >= DailySubmissionLimitReached::LIMIT, DailySubmissionLimitReached::class);
     }
 }

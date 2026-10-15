@@ -20,6 +20,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read string $name
  * @property-read string $email
  * @property-read string $soup
+ * @property string|null $full_name
+ * @property string|null $zipcode
+ * @property string|null $house_number
  * @property-read string $masked_email
  * @property-read Reward|null $reward
  */
@@ -43,6 +46,27 @@ final class Entry extends Model
         return $this->hasOne(Reward::class);
     }
 
+    public function addressToken(): string
+    {
+        return hash_hmac('sha256', $this->id.'|'.$this->code, config()->string('app.key'));
+    }
+
+    public function addressTokenMatches(mixed $token): bool
+    {
+        if (! is_string($token) || $token === '') {
+            return false;
+        }
+
+        return hash_equals($this->addressToken(), $token);
+    }
+
+    public function shippingAddressIsEmpty(): bool
+    {
+        return $this->full_name === null
+            && $this->zipcode === null
+            && $this->house_number === null;
+    }
+
     /**
      * @return array<string, string>
      */
@@ -56,6 +80,9 @@ final class Entry extends Model
             'name' => 'string',
             'email' => 'string',
             'soup' => 'string',
+            'full_name' => 'string',
+            'zipcode' => 'string',
+            'house_number' => 'string',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];

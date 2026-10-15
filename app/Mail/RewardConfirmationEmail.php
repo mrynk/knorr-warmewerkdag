@@ -43,6 +43,10 @@ final class RewardConfirmationEmail extends Mailable implements ShouldQueue
             with: [
                 'entry' => $this->entry,
                 'reward' => $rewards[$reward->name],
+                'addressUrl' => route('result', [
+                    'code' => $this->entry->code,
+                    'token' => $this->entry->addressToken(),
+                ]),
             ],
         );
     }

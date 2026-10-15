@@ -19,10 +19,14 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { landing, redeem } from '@/routes';
+import { address } from '@/routes/result';
 import type Entry from '@/types/Entry';
 
 const props = defineProps<{
     entry?: Entry;
+    showAddressForm?: boolean;
+    addressProvided?: boolean;
+    addressToken?: string | null;
     soups: Record<
         string,
         { id: string; name: string; advise: string; video: string }
@@ -76,6 +80,24 @@ const submit = () => {
                 revealDelay.value = false;
             }, 4000);
         },
+    });
+};
+
+const addressForm = useForm({
+    token: '',
+    full_name: '',
+    zipcode: '',
+    house_number: '',
+});
+
+const submitAddress = () => {
+    if (!props.entry || !props.addressToken) {
+        return;
+    }
+
+    addressForm.token = props.addressToken;
+    addressForm.post(address.url(props.entry.code), {
+        preserveScroll: true,
     });
 };
 
@@ -158,7 +180,7 @@ const footerSoup = computed(() => {
                                         class="h-auto w-full"
                                     />
                                     <p>
-                                        Geniet van je soep, je prijs komt eraan*
+                                        Geniet van je soep, je prijs komt eraan
                                     </p>
                                     <img
                                         :src="`/static/rewards/${entry.reward.name}.png`"
@@ -170,16 +192,85 @@ const footerSoup = computed(() => {
                                     class="w-full bg-white p-4 text-center text-black"
                                     v-html="entry.reward.description"
                                 ></div>
+                                <form
+                                    v-if="showAddressForm"
+                                    class="flex w-full flex-col gap-3 rounded-b-xl p-4 pb-8"
+                                    @submit.prevent="submitAddress()"
+                                >
+                                    <Input
+                                        type="text"
+                                        name="full_name"
+                                        id="full_name"
+                                        autocomplete="name"
+                                        placeholder="Volledige naam"
+                                        v-model="addressForm.full_name"
+                                        required
+                                        class="w-full text-xl placeholder:text-xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80"
+                                    />
+                                    <div
+                                        v-if="addressForm.errors.full_name"
+                                        class="w-full text-left text-sm text-red-200"
+                                    >
+                                        &#x2757;
+                                        {{ addressForm.errors.full_name }}
+                                    </div>
+                                    <Input
+                                        type="text"
+                                        name="zipcode"
+                                        id="zipcode"
+                                        autocomplete="postal-code"
+                                        placeholder="Postcode"
+                                        v-model="addressForm.zipcode"
+                                        required
+                                        class="w-full text-xl placeholder:text-xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80"
+                                    />
+                                    <div
+                                        v-if="addressForm.errors.zipcode"
+                                        class="w-full text-left text-sm text-red-200"
+                                    >
+                                        &#x2757;
+                                        {{ addressForm.errors.zipcode }}
+                                    </div>
+                                    <Input
+                                        type="text"
+                                        name="house_number"
+                                        id="house_number"
+                                        autocomplete="address-line2"
+                                        placeholder="Huisnummer"
+                                        v-model="addressForm.house_number"
+                                        required
+                                        class="w-full text-xl placeholder:text-xl md:text-xl dark:bg-white dark:text-black dark:placeholder:text-black/80"
+                                    />
+                                    <div
+                                        v-if="addressForm.errors.house_number"
+                                        class="w-full text-left text-sm text-red-200"
+                                    >
+                                        &#x2757;
+                                        {{ addressForm.errors.house_number }}
+                                    </div>
+                                    <Button
+                                        type="submit"
+                                        class="cursor-pointer bg-[#F8BA00] text-white hover:bg-[#F8BA00]/80"
+                                        :disabled="addressForm.processing"
+                                    >
+                                        <span>Verstuur mijn adres</span>
+                                        <ChevronRight
+                                            class="h-4 w-4"
+                                            v-if="!addressForm.processing"
+                                        />
+                                        <Loader2
+                                            class="h-4 w-4 animate-spin"
+                                            v-if="addressForm.processing"
+                                        />
+                                    </Button>
+                                </form>
                                 <div
+                                    v-else-if="addressProvided"
                                     class="w-full rounded-b-xl p-4 pb-8 text-center"
                                 >
                                     <p class="text-sm">
-                                        *Je ontvangt een mail op
-                                        <strong>{{
-                                            entry.masked_email
-                                        }}</strong>
-                                        van ons om je gegevens door te geven.
-                                        Check mogelijk je spambox.
+                                        De prijs komt zo spoedig mogelijk naar
+                                        je toe.
                                     </p>
                                 </div>
                             </div>

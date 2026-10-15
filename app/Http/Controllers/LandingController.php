@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\CreateEntry;
+use App\Actions\StoreWinnerAddress;
 use App\Exceptions\DailySubmissionLimitReached;
 use App\Http\Requests\CreateEntryRequest;
+use App\Http\Requests\StoreWinnerAddressRequest;
 use App\Models\Entry;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -46,10 +49,45 @@ final readonly class LandingController
             return to_route('landing')->withErrors(['code' => 'Ongeldige actiecode (010)']);
         }
 
-        return to_route('result', $entry->code);
+        if ($entry->reward === null) {
+            return to_route('result', $entry->code);
+        }
+
+        return to_route('result', [
+            'code' => $entry->code,
+            'token' => $entry->addressToken(),
+        ]);
     }
 
-    public function show(string $code): Response
+    public function show(Request $request, string $code): Response
+    {
+        $entry = $this->entryForCode($code);
+        $showAddressForm = $entry->reward !== null
+            && $entry->shippingAddressIsEmpty()
+            && $entry->addressTokenMatches($request->query('token'));
+
+        return Inertia::render('Landing', [
+            'entry' => $entry,
+            'showAddressForm' => $showAddressForm,
+            'addressProvided' => $entry->reward !== null && ! $entry->shippingAddressIsEmpty(),
+            'addressToken' => $showAddressForm ? $entry->addressToken() : null,
+        ]);
+    }
+
+    public function storeAddress(StoreWinnerAddressRequest $request, string $code, StoreWinnerAddress $storeWinnerAddress): RedirectResponse
+    {
+        $entry = $this->entryForCode($code);
+        $token = $request->string('token')->toString();
+
+        $storeWinnerAddress->handle($entry, $token, $request->addressData());
+
+        return to_route('result', [
+            'code' => $entry->code,
+            'token' => $token,
+        ]);
+    }
+
+    private function entryForCode(string $code): Entry
     {
         $decoded = $this->sqids->decode($code);
 
@@ -57,12 +95,10 @@ final readonly class LandingController
 
         [$batchNumber, $serialNumber] = $decoded;
 
-        $entry = Entry::query()
+        return Entry::query()
             ->where('code', $code)
             ->where('batch_number', $batchNumber)
             ->where('serial_number', $serialNumber)
             ->firstOrFail();
-
-        return Inertia::render('Landing', ['entry' => $entry]);
     }
 }

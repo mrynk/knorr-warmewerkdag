@@ -24,6 +24,14 @@ it('builds the confirmation envelope and content', function (): void {
 
     expect($content->view)->toBe('emails.reward-confirmation')
         ->and($content->with['reward']['title'])->toBe('paar sokken van Soxs');
+
+    $addressUrl = route('result', [
+        'code' => $entry->code,
+        'token' => $entry->addressToken(),
+    ]);
+
+    $mailable->assertSeeInHtml('Klik op deze link om je adres door te geven');
+    $mailable->assertSeeInHtml($addressUrl, false);
 });
 
 it('aborts when the entry has no reward', function (): void {
