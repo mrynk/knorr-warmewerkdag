@@ -31,17 +31,17 @@ final readonly class LandingController
         try {
             $entry = $createEntry->handle($request->entryData());
         } catch (DailySubmissionLimitReached $exception) {
-            return to_route('landing')->withErrors(['email' => $exception->getMessage()]);
+            return to_route('landing')->withErrors(['email' => $exception]);
         } catch (LockTimeoutException) {
             return to_route('landing')->withErrors([
                 'message' => 'Te veel aanvragen, probeer het later opnieuw.',
             ]);
         } catch (UniqueConstraintViolationException $exception) {
-            Log::error('Duplicate entry attempt', ['error' => $exception->getMessage()]);
+            Log::error('Duplicate entry attempt', ['error' => $exception]);
 
             return to_route('landing')->withErrors(['code' => 'Ongeldige actiecode (011)']);
         } catch (Throwable $exception) {
-            Log::error('Error creating entry', ['error' => $exception->getMessage()]);
+            Log::error('Error creating entry', ['error' => $exception]);
 
             return to_route('landing')->withErrors(['code' => 'Ongeldige actiecode (010)']);
         }
