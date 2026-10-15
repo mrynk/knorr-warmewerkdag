@@ -4,11 +4,25 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Services\AddressService;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Client\HttpClientException;
+use LogicException;
 
 final class StoreWinnerAddressRequest extends FormRequest
 {
+    /**
+     * @var array{street: string, city: string}|null
+     */
+    private ?array $matchedAddress = null;
+
+    public function __construct(private readonly AddressService $addresses)
+    {
+        parent::__construct();
+    }
+
     public function authorize(): bool
     {
         return true;
@@ -44,6 +58,45 @@ final class StoreWinnerAddressRequest extends FormRequest
     }
 
     /**
+     * @return array<int, callable(Validator): void>
+     */
+    public function after(Validator $validator): array
+    {
+        return [
+            function (Validator $validator): void {
+                if ($validator->errors()->isNotEmpty()) {
+                    return;
+                }
+
+                try {
+                    $address = $this->addresses->lookup(
+                        $this->string('zipcode')->toString(),
+                        $this->string('house_number')->toString(),
+                    );
+                } catch (HttpClientException) {
+                    $validator->errors()->add(
+                        'house_number',
+                        'Adrescontrole is tijdelijk niet beschikbaar. Probeer het later opnieuw.',
+                    );
+
+                    return;
+                }
+
+                if ($address === null) {
+                    $validator->errors()->add(
+                        'house_number',
+                        'Deze combinatie van postcode en huisnummer is ongeldig.',
+                    );
+
+                    return;
+                }
+
+                $this->matchedAddress = $address;
+            },
+        ];
+    }
+
+    /**
      * @return array<string, string>
      */
     public function attributes(): array
@@ -56,14 +109,20 @@ final class StoreWinnerAddressRequest extends FormRequest
     }
 
     /**
-     * @return array{full_name: string, zipcode: string, house_number: string}
+     * @return array{full_name: string, zipcode: string, house_number: string, street: string, city: string}
      */
     public function addressData(): array
     {
         /** @var array{full_name: string, zipcode: string, house_number: string} $data */
         $data = $this->safe()->only(['full_name', 'zipcode', 'house_number']);
 
-        return $data;
+        throw_if($this->matchedAddress === null, LogicException::class, 'Address lookup result is missing.');
+
+        return [
+            ...$data,
+            'street' => $this->matchedAddress['street'],
+            'city' => $this->matchedAddress['city'],
+        ];
     }
 
     protected function prepareForValidation(): void

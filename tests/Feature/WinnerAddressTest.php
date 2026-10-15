@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 use App\Models\Entry;
 use App\Models\Reward;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia as Assert;
+
+beforeEach(function (): void {
+    config(['inertia.ssr.enabled' => false]);
+});
 
 it('shows the address form for a winning result with a valid token', function (): void {
     $entry = winnerEntry();
@@ -21,7 +27,9 @@ it('shows the address form for a winning result with a valid token', function ()
             ->where('addressToken', $entry->addressToken())
             ->missing('entry.full_name')
             ->missing('entry.zipcode')
-            ->missing('entry.house_number'));
+            ->missing('entry.house_number')
+            ->missing('entry.street')
+            ->missing('entry.city'));
 });
 
 it('hides the address form without a valid token', function (mixed $token): void {
@@ -46,6 +54,8 @@ it('shows the shipping confirmation once the address is saved', function (): voi
         'full_name' => 'Michel van Dam',
         'zipcode' => '1234 AB',
         'house_number' => '12a',
+        'street' => 'Kalverstraat',
+        'city' => 'Amsterdam',
     ]);
 
     $this->get(route('result', [
@@ -59,11 +69,18 @@ it('shows the shipping confirmation once the address is saved', function (): voi
             ->where('addressToken', null)
             ->missing('entry.full_name')
             ->missing('entry.zipcode')
-            ->missing('entry.house_number'));
+            ->missing('entry.house_number')
+            ->missing('entry.street')
+            ->missing('entry.city'));
 });
 
 it('stores a winner address once', function (): void {
     $entry = winnerEntry();
+
+    Http::fake([
+        postcodeUrl('1234AB', '12', 'a') => postcodeResponse('a', 'Kalverstraat', 'Amsterdam'),
+        postcodeUrl('5678CD', '99') => postcodeResponse('', 'Damrak', 'Amsterdam'),
+    ]);
 
     $this->post(route('result.address', $entry->code), [
         'token' => $entry->addressToken(),
@@ -80,6 +97,8 @@ it('stores a winner address once', function (): void {
         'full_name' => 'Michel van Dam',
         'zipcode' => '1234 AB',
         'house_number' => '12a',
+        'street' => 'Kalverstraat',
+        'city' => 'Amsterdam',
     ]);
 
     $this->post(route('result.address', $entry->code), [
@@ -97,10 +116,18 @@ it('stores a winner address once', function (): void {
         'full_name' => 'Michel van Dam',
         'zipcode' => '1234 AB',
         'house_number' => '12a',
+        'street' => 'Kalverstraat',
+        'city' => 'Amsterdam',
     ]);
+
+    Http::assertSentCount(2);
 });
 
 it('rejects an address for an entry without a reward', function (): void {
+    Http::fake([
+        postcodeUrl('1234AB', '12') => postcodeResponse(''),
+    ]);
+
     $entry = Entry::factory()->create([
         'code' => campaignCode(),
         'batch_number' => 0,
@@ -121,6 +148,10 @@ it('rejects an address for an entry without a reward', function (): void {
 });
 
 it('rejects an address with the wrong token', function (): void {
+    Http::fake([
+        postcodeUrl('1234AB', '12') => postcodeResponse(''),
+    ]);
+
     $entry = winnerEntry();
 
     $this->post(route('result.address', $entry->code), [
@@ -137,6 +168,10 @@ it('rejects an address with the wrong token', function (): void {
 });
 
 it('rejects an address for an unknown result code', function (): void {
+    Http::fake([
+        postcodeUrl('1234AB', '12') => postcodeResponse(''),
+    ]);
+
     $this->post(route('result.address', campaignCode(1, 2)), [
         'token' => 'not-the-token',
         'full_name' => 'Michel van Dam',
@@ -192,6 +227,110 @@ it('rejects an invalid postcode', function (): void {
     ]);
 });
 
+it('rejects an unknown postcode and house number combination', function (): void {
+    $entry = winnerEntry();
+
+    Http::fake([
+        postcodeUrl('1234AB', '12') => Http::response(['exception' => 'Combination does not exist.'], 404),
+    ]);
+
+    $this->from(route('result', [
+        'code' => $entry->code,
+        'token' => $entry->addressToken(),
+    ]))
+        ->post(route('result.address', $entry->code), [
+            'token' => $entry->addressToken(),
+            'full_name' => 'Michel van Dam',
+            'zipcode' => '1234 AB',
+            'house_number' => '12',
+        ])
+        ->assertRedirect(route('result', [
+            'code' => $entry->code,
+            'token' => $entry->addressToken(),
+        ]))
+        ->assertSessionHasErrors([
+            'house_number' => 'Deze combinatie van postcode en huisnummer is ongeldig.',
+        ]);
+
+    $this->assertDatabaseHas('entries', [
+        'id' => $entry->id,
+        'full_name' => null,
+        'street' => null,
+        'city' => null,
+    ]);
+});
+
+it('rejects a house number addition that does not exist', function (): void {
+    $entry = winnerEntry();
+
+    Http::fake([
+        postcodeUrl('1234AB', '12', 'a') => Http::response([
+            'street' => 'Kalverstraat',
+            'city' => 'Amsterdam',
+            'houseNumberAddition' => null,
+            'houseNumberAdditions' => ['', 'b'],
+        ]),
+    ]);
+
+    $this->from(route('result', [
+        'code' => $entry->code,
+        'token' => $entry->addressToken(),
+    ]))
+        ->post(route('result.address', $entry->code), [
+            'token' => $entry->addressToken(),
+            'full_name' => 'Michel van Dam',
+            'zipcode' => '1234 AB',
+            'house_number' => '12a',
+        ])
+        ->assertRedirect(route('result', [
+            'code' => $entry->code,
+            'token' => $entry->addressToken(),
+        ]))
+        ->assertSessionHasErrors([
+            'house_number' => 'Deze combinatie van postcode en huisnummer is ongeldig.',
+        ]);
+
+    $this->assertDatabaseHas('entries', [
+        'id' => $entry->id,
+        'full_name' => null,
+        'street' => null,
+        'city' => null,
+    ]);
+});
+
+it('rejects the address when postcode lookup is unavailable', function (): void {
+    $entry = winnerEntry();
+
+    Http::fake([
+        postcodeUrl('1234AB', '12') => Http::response(['exception' => 'Server error.'], 500),
+    ]);
+
+    $this->from(route('result', [
+        'code' => $entry->code,
+        'token' => $entry->addressToken(),
+    ]))
+        ->post(route('result.address', $entry->code), [
+            'token' => $entry->addressToken(),
+            'full_name' => 'Michel van Dam',
+            'zipcode' => '1234 AB',
+            'house_number' => '12',
+        ])
+        ->assertRedirect(route('result', [
+            'code' => $entry->code,
+            'token' => $entry->addressToken(),
+        ]))
+        ->assertSessionHasErrors([
+            'house_number' => 'Adrescontrole is tijdelijk niet beschikbaar. Probeer het later opnieuw.',
+        ]);
+
+    $this->assertDatabaseHas('entries', [
+        'id' => $entry->id,
+        'full_name' => null,
+        'street' => null,
+        'city' => null,
+    ]);
+});
+
 it('rejects an address field that is too long', function (string $field, string $value, string $message): void {
     $entry = winnerEntry();
 
@@ -219,6 +358,26 @@ it('rejects an address field that is too long', function (string $field, string 
     'full name' => ['full_name', str_repeat('a', 256), 'Volledige naam mag niet uit meer dan 255 tekens bestaan.'],
     'house number' => ['house_number', str_repeat('1', 21), 'Huisnummer mag niet uit meer dan 20 tekens bestaan.'],
 ]);
+
+function postcodeUrl(string $postcode, string $houseNumber, string $addition = ''): string
+{
+    $url = 'https://api.postcode.eu/nl/v1/addresses/postcode/'.$postcode.'/'.$houseNumber;
+
+    if ($addition !== '') {
+        $url .= '/'.rawurlencode($addition);
+    }
+
+    return $url;
+}
+
+function postcodeResponse(string $addition, string $street = 'Kalverstraat', string $city = 'Amsterdam'): PromiseInterface
+{
+    return Http::response([
+        'street' => $street,
+        'city' => $city,
+        'houseNumberAddition' => $addition,
+    ]);
+}
 
 /**
  * @param  array<string, mixed>  $attributes

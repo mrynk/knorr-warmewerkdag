@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string|null $full_name
  * @property string|null $zipcode
  * @property string|null $house_number
+ * @property string|null $street
+ * @property string|null $city
  * @property-read string $masked_email
  * @property-read Reward|null $reward
  */
@@ -64,7 +66,9 @@ final class Entry extends Model
     {
         return $this->full_name === null
             && $this->zipcode === null
-            && $this->house_number === null;
+            && $this->house_number === null
+            && $this->street === null
+            && $this->city === null;
     }
 
     /**
@@ -83,6 +87,8 @@ final class Entry extends Model
             'full_name' => 'string',
             'zipcode' => 'string',
             'house_number' => 'string',
+            'street' => 'string',
+            'city' => 'string',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];

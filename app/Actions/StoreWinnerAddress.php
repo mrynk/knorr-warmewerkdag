@@ -10,7 +10,7 @@ use App\Models\Reward;
 final readonly class StoreWinnerAddress
 {
     /**
-     * @param  array{full_name: string, zipcode: string, house_number: string}  $data
+     * @param  array{full_name: string, zipcode: string, house_number: string, street: string, city: string}  $data
      */
     public function handle(Entry $entry, string $token, array $data): void
     {
@@ -22,10 +22,14 @@ final readonly class StoreWinnerAddress
             ->whereNull('full_name')
             ->whereNull('zipcode')
             ->whereNull('house_number')
+            ->whereNull('street')
+            ->whereNull('city')
             ->update([
                 'full_name' => $data['full_name'],
                 'zipcode' => $data['zipcode'],
                 'house_number' => $data['house_number'],
+                'street' => $data['street'],
+                'city' => $data['city'],
             ]);
     }
 }

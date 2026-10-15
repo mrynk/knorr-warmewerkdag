@@ -44,4 +44,9 @@ return [
         'scheme' => 'https',
     ],
 
+    'postcode_eu' => [
+        'key' => env('POSTCODE_EU_KEY', ''),
+        'secret' => env('POSTCODE_EU_SECRET', ''),
+    ],
+
 ];

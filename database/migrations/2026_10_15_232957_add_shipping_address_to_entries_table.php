@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('full_name')->nullable();
             $table->string('zipcode')->nullable();
             $table->string('house_number')->nullable();
+            $table->string('street')->nullable();
+            $table->string('city')->nullable();
         });
     }
 
@@ -26,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('entries', function (Blueprint $table): void {
-            $table->dropColumn(['full_name', 'zipcode', 'house_number']);
+            $table->dropColumn(['full_name', 'zipcode', 'house_number', 'street', 'city']);
         });
     }
 };
