@@ -197,6 +197,12 @@ const footerSoup = computed(() => {
                                     class="flex w-full flex-col gap-3 rounded-b-xl p-4 pb-8"
                                     @submit.prevent="submitAddress()"
                                 >
+                                    <div class="flex w-full flex-col gap-3">
+                                        <span
+                                            >Waar mogen we de rpijs naartoe
+                                            sturen?</span
+                                        >
+                                    </div>
                                     <Input
                                         type="text"
                                         name="full_name"
